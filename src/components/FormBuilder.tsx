@@ -1,0 +1,680 @@
+import React, { useState, useRef } from 'react';
+import { 
+  Plus, 
+  Trash2, 
+  Edit3, 
+  Eye, 
+  Code, 
+  Download, 
+  Palette, 
+  Settings, 
+  Layers,
+  Zap,
+  Monitor,
+  Tablet,
+  Smartphone,
+  ArrowLeft,
+  Save,
+  Play,
+  Pause,
+  RotateCcw
+} from 'lucide-react';
+
+interface FormBuilderProps {
+  onNavigate: (component: string) => void;
+}
+
+interface FormField {
+  id: string;
+  type: 'input' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'file' | 'date' | 'range';
+  inputType?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'number' | 'search';
+  label: string;
+  placeholder?: string;
+  required: boolean;
+  options?: string[];
+  validation?: string;
+  animation?: string;
+  section?: string;
+}
+
+interface FormSection {
+  id: string;
+  title: string;
+  description?: string;
+  collapsible: boolean;
+  animation?: string;
+}
+
+export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
+  const [activeTab, setActiveTab] = useState('design');
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Form configuration
+  const [formConfig, setFormConfig] = useState({
+    title: 'Contact Form',
+    description: 'Get in touch with us',
+    theme: 'default',
+    primaryColor: '#374151',
+    secondaryColor: '#6B7280',
+    accentColor: '#111827',
+    spacing: 'comfortable',
+    borderRadius: 'md',
+    shadow: 'md',
+    animation: 'fadeInUp',
+    font: 'Inter'
+  });
+
+  const [sections, setSections] = useState<FormSection[]>([
+    { id: '1', title: 'Personal Information', collapsible: false, animation: 'fadeInUp' }
+  ]);
+
+  const [fields, setFields] = useState<FormField[]>([
+    { id: '1', type: 'input', inputType: 'text', label: 'Full Name', required: true, section: '1', animation: 'fadeInLeft' },
+    { id: '2', type: 'input', inputType: 'email', label: 'Email Address', required: true, section: '1', animation: 'fadeInRight' },
+    { id: '3', type: 'textarea', label: 'Message', placeholder: 'Your message...', required: false, section: '1', animation: 'fadeInUp' }
+  ]);
+
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const themes = [
+    { name: 'Default', value: 'default', colors: ['#374151', '#6B7280', '#111827'] },
+    { name: 'Dark', value: 'dark', colors: ['#1F2937', '#4B5563', '#000000'] },
+    { name: 'Minimal', value: 'minimal', colors: ['#000000', '#666666', '#FFFFFF'] },
+    { name: 'Corporate', value: 'corporate', colors: ['#111827', '#374151', '#6B7280'] }
+  ];
+
+  const animations = [
+    'fadeIn', 'fadeInUp', 'fadeInDown', 'fadeInLeft', 'fadeInRight',
+    'slideInUp', 'slideInDown', 'slideInLeft', 'slideInRight',
+    'scaleIn', 'bounceIn', 'rotateIn', 'pulse'
+  ];
+
+  const addField = () => {
+    const newField: FormField = {
+      id: Date.now().toString(),
+      type: 'input',
+      inputType: 'text',
+      label: 'New Field',
+      required: false,
+      section: sections[0]?.id || '1',
+      animation: 'fadeInUp'
+    };
+    setFields([...fields, newField]);
+  };
+
+  const addSection = () => {
+    const newSection: FormSection = {
+      id: Date.now().toString(),
+      title: 'New Section',
+      collapsible: false,
+      animation: 'fadeInUp'
+    };
+    setSections([...sections, newSection]);
+  };
+
+  const deleteField = (id: string) => {
+    setFields(fields.filter(field => field.id !== id));
+  };
+
+  const deleteSection = (id: string) => {
+    setSections(sections.filter(section => section.id !== id));
+    setFields(fields.filter(field => field.section !== id));
+  };
+
+  const updateField = (id: string, updates: Partial<FormField>) => {
+    setFields(fields.map(field => field.id === id ? { ...field, ...updates } : field));
+  };
+
+  const updateSection = (id: string, updates: Partial<FormSection>) => {
+    setSections(sections.map(section => section.id === id ? { ...section, ...updates } : section));
+  };
+
+  const playAnimation = () => {
+    setIsAnimating(true);
+    if (previewRef.current) {
+      const elements = previewRef.current.querySelectorAll('[data-animate]');
+      elements.forEach((el, index) => {
+        const element = el as HTMLElement;
+        element.style.animation = 'none';
+        setTimeout(() => {
+          element.style.animation = '';
+        }, index * 100);
+      });
+    }
+    setTimeout(() => setIsAnimating(false), 2000);
+  };
+
+  const generateCode = () => {
+    const sectionsHtml = sections.map(section => {
+      const sectionFields = fields.filter(field => field.section === section.id);
+      const fieldsHtml = sectionFields.map(field => {
+        const animationAttr = field.animation ? `data-animate="${field.animation}"` : '';
+        
+        switch (field.type) {
+          case 'input':
+            return `    <kaury-input 
+      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+      label="${field.label}"
+      type="${field.inputType || 'text'}"
+      ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
+      ${field.required ? 'required' : ''}
+      ${animationAttr}
+    ></kaury-input>`;
+          case 'textarea':
+            return `    <kaury-textarea 
+      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+      label="${field.label}"
+      ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
+      ${field.required ? 'required' : ''}
+      ${animationAttr}
+    ></kaury-textarea>`;
+          case 'select':
+            return `    <kaury-select 
+      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+      label="${field.label}"
+      options='${JSON.stringify(field.options?.map(opt => ({ value: opt.toLowerCase(), label: opt })) || [])}'
+      ${field.required ? 'required' : ''}
+      ${animationAttr}
+    ></kaury-select>`;
+          default:
+            return `    <kaury-${field.type} 
+      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+      label="${field.label}"
+      ${field.required ? 'required' : ''}
+      ${animationAttr}
+    ></kaury-${field.type}>`;
+        }
+      }).join('\n');
+
+      return `  <kaury-section 
+    title="${section.title}"
+    ${section.description ? `description="${section.description}"` : ''}
+    ${section.collapsible ? 'collapsible' : ''}
+    ${section.animation ? `data-animate="${section.animation}"` : ''}
+  >
+${fieldsHtml}
+  </kaury-section>`;
+    }).join('\n\n');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${formConfig.title}</title>
+    <script src="https://cdn.jsdelivr.net/npm/kauryui@latest/dist/kauryui.js"></script>
+    <style>
+        :root {
+            --kaury-color-primary: ${formConfig.primaryColor};
+            --kaury-color-secondary: ${formConfig.secondaryColor};
+            --kaury-color-accent: ${formConfig.accentColor};
+            --kaury-font-family: ${formConfig.font}, system-ui, sans-serif;
+        }
+        
+        body {
+            font-family: var(--kaury-font-family);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: ${formConfig.borderRadius === 'sm' ? '8px' : formConfig.borderRadius === 'lg' ? '16px' : '12px'};
+            box-shadow: ${formConfig.shadow === 'sm' ? '0 1px 3px rgba(0,0,0,0.1)' : formConfig.shadow === 'lg' ? '0 20px 25px rgba(0,0,0,0.15)' : '0 10px 15px rgba(0,0,0,0.1)'};
+            padding: 2rem;
+        }
+        
+        [data-animate] {
+            animation-duration: 0.6s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <kaury-form title="${formConfig.title}" description="${formConfig.description}">
+${sectionsHtml}
+            
+            <kaury-button type="submit" variant="primary" size="lg">
+                Submit Form
+            </kaury-button>
+        </kaury-form>
+    </div>
+</body>
+</html>`;
+  };
+
+  const getPreviewWidth = () => {
+    switch (previewMode) {
+      case 'tablet': return '768px';
+      case 'mobile': return '375px';
+      default: return '100%';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Header */}
+      <header className="bg-black/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => onNavigate('landing')}
+                className="text-gray-300 hover:text-white transition-colors p-2 hover:bg-gray-800 rounded-lg"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <h1 className="text-xl font-bold text-white">Form Builder</h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => setPreviewMode('desktop')}
+                  className={`p-2 rounded ${previewMode === 'desktop' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <Monitor className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setPreviewMode('tablet')}
+                  className={`p-2 rounded ${previewMode === 'tablet' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <Tablet className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setPreviewMode('mobile')}
+                  className={`p-2 rounded ${previewMode === 'mobile' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <Smartphone className="w-4 h-4" />
+                </button>
+              </div>
+              
+              <button
+                onClick={playAnimation}
+                disabled={isAnimating}
+                className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 flex items-center space-x-2 disabled:opacity-50"
+              >
+                {isAnimating ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                <span>{isAnimating ? 'Playing...' : 'Preview'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex h-[calc(100vh-4rem)]">
+        {/* Sidebar */}
+        <div className="w-80 bg-gray-900/50 backdrop-blur-sm border-r border-gray-800 overflow-y-auto">
+          {/* Tabs */}
+          <div className="flex border-b border-gray-800">
+            {[
+              { id: 'design', label: 'Design', icon: <Palette className="w-4 h-4" /> },
+              { id: 'fields', label: 'Fields', icon: <Layers className="w-4 h-4" /> },
+              { id: 'layout', label: 'Layout', icon: <Settings className="w-4 h-4" /> },
+              { id: 'animations', label: 'Animate', icon: <Zap className="w-4 h-4" /> }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-white bg-gray-800 border-b-2 border-gray-400'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'design' && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Form Title</label>
+                  <input
+                    type="text"
+                    value={formConfig.title}
+                    onChange={(e) => setFormConfig({ ...formConfig, title: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Description</label>
+                  <textarea
+                    value={formConfig.description}
+                    onChange={(e) => setFormConfig({ ...formConfig, description: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 h-20 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-3">Theme</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {themes.map(theme => (
+                      <button
+                        key={theme.value}
+                        onClick={() => setFormConfig({ ...formConfig, theme: theme.value })}
+                        className={`p-3 rounded-lg border transition-all ${
+                          formConfig.theme === theme.value
+                            ? 'border-gray-400 bg-gray-700'
+                            : 'border-gray-700 bg-gray-800 hover:bg-gray-700'
+                        }`}
+                      >
+                        <div className="flex space-x-1 mb-2">
+                          {theme.colors.map((color, i) => (
+                            <div
+                              key={i}
+                              className="w-4 h-4 rounded-full"
+                              style={{ borderColor: formConfig.primaryColor + '80' }}
+                            />
+                          ))}
+                        </div>
+                        <div className="text-xs text-white">{theme.name}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Primary Color</label>
+                  <input
+                    type="color"
+                    value={formConfig.primaryColor}
+                    onChange={(e) => setFormConfig({ ...formConfig, primaryColor: e.target.value })}
+                    className="w-full h-10 rounded-lg border border-gray-700 bg-gray-800"
+                  />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'fields' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-white">Form Fields</h3>
+                  <button
+                    onClick={addField}
+                    className="bg-gradient-to-r from-gray-700 to-gray-600 text-white p-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {fields.map(field => (
+                    <div key={field.id} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                      <div className="flex justify-between items-start mb-3">
+                        <input
+                          type="text"
+                          value={field.label}
+                          onChange={(e) => updateField(field.id, { label: e.target.value })}
+                          className="font-medium text-white bg-transparent border-none outline-none flex-1"
+                        />
+                        <button
+                          onClick={() => deleteField(field.id)}
+                          className="text-gray-400 hover:text-gray-300 p-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <select
+                          value={field.type}
+                          onChange={(e) => updateField(field.id, { type: e.target.value as any })}
+                          className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white"
+                        >
+                          <option value="input">Input</option>
+                          <option value="textarea">Textarea</option>
+                          <option value="select">Select</option>
+                          <option value="checkbox">Checkbox</option>
+                          <option value="radio">Radio</option>
+                        </select>
+                        
+                        <select
+                          value={field.animation || 'fadeInUp'}
+                          onChange={(e) => updateField(field.id, { animation: e.target.value })}
+                          className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white"
+                        >
+                          {animations.map(anim => (
+                            <option key={anim} value={anim}>{anim}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-4 border-t border-gray-700">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-medium text-white">Sections</h4>
+                    <button
+                      onClick={addSection}
+                      className="bg-gradient-to-r from-gray-700 to-gray-600 text-white p-1 rounded"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
+                  </div>
+                  
+                  {sections.map(section => (
+                    <div key={section.id} className="bg-gray-800/50 rounded p-3 mb-2">
+                      <div className="flex justify-between items-center">
+                        <input
+                          type="text"
+                          value={section.title}
+                          onChange={(e) => updateSection(section.id, { title: e.target.value })}
+                          className="text-white bg-transparent border-none outline-none text-sm flex-1"
+                        />
+                        <button
+                          onClick={() => deleteSection(section.id)}
+                          className="text-gray-400 hover:text-gray-300"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'layout' && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Spacing</label>
+                  <select
+                    value={formConfig.spacing}
+                    onChange={(e) => setFormConfig({ ...formConfig, spacing: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    <option value="compact">Compact</option>
+                    <option value="comfortable">Comfortable</option>
+                    <option value="spacious">Spacious</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Border Radius</label>
+                  <select
+                    value={formConfig.borderRadius}
+                    onChange={(e) => setFormConfig({ ...formConfig, borderRadius: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Shadow</label>
+                  <select
+                    value={formConfig.shadow}
+                    onChange={(e) => setFormConfig({ ...formConfig, shadow: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    <option value="sm">Small</option>
+                    <option value="md">Medium</option>
+                    <option value="lg">Large</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'animations' && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Form Animation</label>
+                  <select
+                    value={formConfig.animation}
+                    onChange={(e) => setFormConfig({ ...formConfig, animation: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    {animations.map(anim => (
+                      <option key={anim} value={anim}>{anim}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-3">Animation Preview</h4>
+                  <button
+                    onClick={playAnimation}
+                    disabled={isAnimating}
+                    className="w-full bg-gradient-to-r from-gray-700 to-gray-600 text-white py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 disabled:opacity-50"
+                  >
+                    {isAnimating ? 'Playing...' : 'Play Animations'}
+                  </button>
+                </div>
+
+                <div className="text-xs text-gray-400">
+                  <p>Animations are applied to individual fields and sections. Use the Fields tab to configure per-element animations.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Preview */}
+          <div className="flex-1 p-6 overflow-auto">
+            <div className="flex justify-center">
+              <div 
+                ref={previewRef}
+                className="transition-all duration-300 bg-white rounded-xl shadow-2xl overflow-hidden"
+                style={{ 
+                  width: getPreviewWidth(),
+                  maxWidth: '100%',
+                  minHeight: '600px'
+                }}
+              >
+                <div className="p-8">
+                  <div data-animate={formConfig.animation}>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{formConfig.title}</h1>
+                    <p className="text-gray-600 mb-8">{formConfig.description}</p>
+                  </div>
+
+                  {sections.map(section => {
+                    const sectionFields = fields.filter(field => field.section === section.id);
+                    return (
+                      <div key={section.id} className="mb-8" data-animate={section.animation}>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4">{section.title}</h2>
+                        <div className="space-y-4">
+                          {sectionFields.map(field => (
+                            <div key={field.id} data-animate={field.animation}>
+                              {field.type === 'input' && (
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                                  </label>
+                                  <input
+                                    type={field.inputType}
+                                    placeholder={field.placeholder}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style={{ borderColor: formConfig.primaryColor + '40' }}
+                                  />
+                                </div>
+                              )}
+                              {field.type === 'textarea' && (
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                                  </label>
+                                  <textarea
+                                    placeholder={field.placeholder}
+                                    rows={4}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                    style={{ borderColor: formConfig.primaryColor + '40' }}
+                                  />
+                                </div>
+                              )}
+                              {field.type === 'select' && (
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                                  </label>
+                                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option>Select an option</option>
+                                    {field.options?.map((option, i) => (
+                                      <option key={i} value={option}>{option}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  <button
+                    className="w-full py-3 px-6 rounded-lg text-white font-semibold transition-all duration-300 hover:scale-105"
+                    style={{ backgroundColor: formConfig.primaryColor }}
+                  >
+                    Submit Form
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Actions */}
+          <div className="bg-gray-900/50 backdrop-blur-sm border-t border-gray-800 p-4">
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-gray-400">
+                {fields.length} fields • {sections.length} sections
+              </div>
+              
+              <div className="flex space-x-3">
+                <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2">
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const code = generateCode();
+                    navigator.clipboard.writeText(code);
+                  }}
+                  className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 flex items-center space-x-2"
+                >
+                  <Code className="w-4 h-4" />
+                  <span>Export Code</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

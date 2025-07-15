@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -20,6 +20,9 @@ import {
   RotateCcw
 } from 'lucide-react';
 
+// Import des composants KauryUI
+import '../lib/index';
+
 interface FormBuilderProps {
   onNavigate: (component: string) => void;
 }
@@ -34,6 +37,11 @@ interface FormField {
   options?: string[];
   validation?: string;
   animation?: string;
+  animationDuration?: string;
+  animationDelay?: string;
+  animationIteration?: string;
+  animationDirection?: string;
+  animationTiming?: string;
   section?: string;
 }
 
@@ -43,6 +51,11 @@ interface FormSection {
   description?: string;
   collapsible: boolean;
   animation?: string;
+  animationDuration?: string;
+  animationDelay?: string;
+  animationIteration?: string;
+  animationDirection?: string;
+  animationTiming?: string;
 }
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
@@ -50,10 +63,10 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Form configuration
+  // Configuration du formulaire avec propriétés d'animation étendues
   const [formConfig, setFormConfig] = useState({
-    title: 'Contact Form',
-    description: 'Get in touch with us',
+    title: 'Formulaire de Contact',
+    description: 'Contactez-nous facilement',
     theme: 'default',
     primaryColor: '#374151',
     secondaryColor: '#6B7280',
@@ -62,24 +75,78 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     borderRadius: 'md',
     shadow: 'md',
     animation: 'fadeInUp',
+    animationDuration: '0.6s',
+    animationDelay: '0s',
+    animationIteration: '1',
+    animationDirection: 'normal',
+    animationTiming: 'ease-in-out',
     font: 'Inter'
   });
 
   const [sections, setSections] = useState<FormSection[]>([
-    { id: '1', title: 'Personal Information', collapsible: false, animation: 'fadeInUp' }
+    { 
+      id: '1', 
+      title: 'Informations Personnelles', 
+      collapsible: false, 
+      animation: 'fadeInUp',
+      animationDuration: '0.6s',
+      animationDelay: '0.2s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
+    }
   ]);
 
   const [fields, setFields] = useState<FormField[]>([
-    { id: '1', type: 'input', inputType: 'text', label: 'Full Name', required: true, section: '1', animation: 'fadeInLeft' },
-    { id: '2', type: 'input', inputType: 'email', label: 'Email Address', required: true, section: '1', animation: 'fadeInRight' },
-    { id: '3', type: 'textarea', label: 'Message', placeholder: 'Your message...', required: false, section: '1', animation: 'fadeInUp' }
+    { 
+      id: '1', 
+      type: 'input', 
+      inputType: 'text', 
+      label: 'Nom Complet', 
+      required: true, 
+      section: '1', 
+      animation: 'fadeInLeft',
+      animationDuration: '0.6s',
+      animationDelay: '0.3s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
+    },
+    { 
+      id: '2', 
+      type: 'input', 
+      inputType: 'email', 
+      label: 'Adresse Email', 
+      required: true, 
+      section: '1', 
+      animation: 'fadeInRight',
+      animationDuration: '0.6s',
+      animationDelay: '0.4s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
+    },
+    { 
+      id: '3', 
+      type: 'textarea', 
+      label: 'Message', 
+      placeholder: 'Votre message...', 
+      required: false, 
+      section: '1', 
+      animation: 'fadeInUp',
+      animationDuration: '0.6s',
+      animationDelay: '0.5s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
+    }
   ]);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
   const themes = [
-    { name: 'Default', value: 'default', colors: ['#374151', '#6B7280', '#111827'] },
-    { name: 'Dark', value: 'dark', colors: ['#1F2937', '#4B5563', '#000000'] },
+    { name: 'Défaut', value: 'default', colors: ['#374151', '#6B7280', '#111827'] },
+    { name: 'Sombre', value: 'dark', colors: ['#1F2937', '#4B5563', '#000000'] },
     { name: 'Minimal', value: 'minimal', colors: ['#000000', '#666666', '#FFFFFF'] },
     { name: 'Corporate', value: 'corporate', colors: ['#111827', '#374151', '#6B7280'] }
   ];
@@ -87,18 +154,40 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const animations = [
     'fadeIn', 'fadeInUp', 'fadeInDown', 'fadeInLeft', 'fadeInRight',
     'slideInUp', 'slideInDown', 'slideInLeft', 'slideInRight',
-    'scaleIn', 'bounceIn', 'rotateIn', 'pulse'
+    'scaleIn', 'bounceIn', 'rotateIn', 'pulse', 'shake'
   ];
+
+  const animationTimings = [
+    'ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear'
+  ];
+
+  const animationDirections = [
+    'normal', 'reverse', 'alternate', 'alternate-reverse'
+  ];
+
+  // Appliquer le thème au document
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--kaury-color-primary', formConfig.primaryColor);
+    root.style.setProperty('--kaury-color-secondary', formConfig.secondaryColor);
+    root.style.setProperty('--kaury-color-accent', formConfig.accentColor);
+    root.style.setProperty('--kaury-font-family', `${formConfig.font}, system-ui, sans-serif`);
+  }, [formConfig.primaryColor, formConfig.secondaryColor, formConfig.accentColor, formConfig.font]);
 
   const addField = () => {
     const newField: FormField = {
       id: Date.now().toString(),
       type: 'input',
       inputType: 'text',
-      label: 'New Field',
+      label: 'Nouveau Champ',
       required: false,
       section: sections[0]?.id || '1',
-      animation: 'fadeInUp'
+      animation: 'fadeInUp',
+      animationDuration: '0.6s',
+      animationDelay: '0s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
     };
     setFields([...fields, newField]);
   };
@@ -106,9 +195,14 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const addSection = () => {
     const newSection: FormSection = {
       id: Date.now().toString(),
-      title: 'New Section',
+      title: 'Nouvelle Section',
       collapsible: false,
-      animation: 'fadeInUp'
+      animation: 'fadeInUp',
+      animationDuration: '0.6s',
+      animationDelay: '0s',
+      animationIteration: '1',
+      animationDirection: 'normal',
+      animationTiming: 'ease-in-out'
     };
     setSections([...sections, newSection]);
   };
@@ -133,72 +227,93 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const playAnimation = () => {
     setIsAnimating(true);
     if (previewRef.current) {
-      const elements = previewRef.current.querySelectorAll('[data-animate]');
-      elements.forEach((el, index) => {
-        const element = el as HTMLElement;
-        element.style.animation = 'none';
+      const animationElements = previewRef.current.querySelectorAll('kaury-animation');
+      animationElements.forEach((element: any, index) => {
         setTimeout(() => {
-          element.style.animation = '';
+          if (element.play) {
+            element.play();
+          }
         }, index * 100);
       });
     }
-    setTimeout(() => setIsAnimating(false), 2000);
+    setTimeout(() => setIsAnimating(false), 3000);
   };
 
   const generateCode = () => {
     const sectionsHtml = sections.map(section => {
       const sectionFields = fields.filter(field => field.section === section.id);
       const fieldsHtml = sectionFields.map(field => {
-        const animationAttr = field.animation ? `data-animate="${field.animation}"` : '';
+        const animationWrapper = `<kaury-animation 
+      type="${field.animation || 'fadeInUp'}"
+      duration="${field.animationDuration || '0.6s'}"
+      delay="${field.animationDelay || '0s'}"
+      iteration="${field.animationIteration || '1'}"
+      direction="${field.animationDirection || 'normal'}"
+      timing="${field.animationTiming || 'ease-in-out'}"
+      trigger="scroll"
+    >`;
         
+        let fieldHtml = '';
         switch (field.type) {
           case 'input':
-            return `    <kaury-input 
-      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
-      label="${field.label}"
-      type="${field.inputType || 'text'}"
-      ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
-      ${field.required ? 'required' : ''}
-      ${animationAttr}
-    ></kaury-input>`;
+            fieldHtml = `      <kaury-input 
+        name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+        label="${field.label}"
+        type="${field.inputType || 'text'}"
+        ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
+        ${field.required ? 'required' : ''}
+      ></kaury-input>`;
+            break;
           case 'textarea':
-            return `    <kaury-textarea 
-      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
-      label="${field.label}"
-      ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
-      ${field.required ? 'required' : ''}
-      ${animationAttr}
-    ></kaury-textarea>`;
+            fieldHtml = `      <kaury-textarea 
+        name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+        label="${field.label}"
+        ${field.placeholder ? `placeholder="${field.placeholder}"` : ''}
+        ${field.required ? 'required' : ''}
+      ></kaury-textarea>`;
+            break;
           case 'select':
-            return `    <kaury-select 
-      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
-      label="${field.label}"
-      options='${JSON.stringify(field.options?.map(opt => ({ value: opt.toLowerCase(), label: opt })) || [])}'
-      ${field.required ? 'required' : ''}
-      ${animationAttr}
-    ></kaury-select>`;
+            fieldHtml = `      <kaury-select 
+        name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+        label="${field.label}"
+        options='${JSON.stringify(field.options?.map(opt => ({ value: opt.toLowerCase(), label: opt })) || [])}'
+        ${field.required ? 'required' : ''}
+      ></kaury-select>`;
+            break;
           default:
-            return `    <kaury-${field.type} 
-      name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
-      label="${field.label}"
-      ${field.required ? 'required' : ''}
-      ${animationAttr}
-    ></kaury-${field.type}>`;
+            fieldHtml = `      <kaury-${field.type} 
+        name="${field.label.toLowerCase().replace(/\s+/g, '_')}"
+        label="${field.label}"
+        ${field.required ? 'required' : ''}
+      ></kaury-${field.type}>`;
         }
-      }).join('\n');
 
-      return `  <kaury-section 
-    title="${section.title}"
-    ${section.description ? `description="${section.description}"` : ''}
-    ${section.collapsible ? 'collapsible' : ''}
-    ${section.animation ? `data-animate="${section.animation}"` : ''}
+        return `    ${animationWrapper}
+${fieldHtml}
+    </kaury-animation>`;
+      }).join('\n\n');
+
+      return `  <kaury-animation 
+    type="${section.animation || 'fadeInUp'}"
+    duration="${section.animationDuration || '0.6s'}"
+    delay="${section.animationDelay || '0s'}"
+    iteration="${section.animationIteration || '1'}"
+    direction="${section.animationDirection || 'normal'}"
+    timing="${section.animationTiming || 'ease-in-out'}"
+    trigger="scroll"
   >
+    <kaury-section 
+      title="${section.title}"
+      ${section.description ? `description="${section.description}"` : ''}
+      ${section.collapsible ? 'collapsible' : ''}
+    >
 ${fieldsHtml}
-  </kaury-section>`;
+    </kaury-section>
+  </kaury-animation>`;
     }).join('\n\n');
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +332,7 @@ ${fieldsHtml}
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 2rem;
+            margin: 0;
         }
         
         .form-container {
@@ -227,22 +343,29 @@ ${fieldsHtml}
             box-shadow: ${formConfig.shadow === 'sm' ? '0 1px 3px rgba(0,0,0,0.1)' : formConfig.shadow === 'lg' ? '0 20px 25px rgba(0,0,0,0.15)' : '0 10px 15px rgba(0,0,0,0.1)'};
             padding: 2rem;
         }
-        
-        [data-animate] {
-            animation-duration: 0.6s;
-            animation-fill-mode: both;
-        }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <kaury-form title="${formConfig.title}" description="${formConfig.description}">
+        <kaury-animation 
+          type="${formConfig.animation}"
+          duration="${formConfig.animationDuration}"
+          delay="${formConfig.animationDelay}"
+          iteration="${formConfig.animationIteration}"
+          direction="${formConfig.animationDirection}"
+          timing="${formConfig.animationTiming}"
+          trigger="load"
+        >
+            <kaury-form title="${formConfig.title}" description="${formConfig.description}">
 ${sectionsHtml}
-            
-            <kaury-button type="submit" variant="primary" size="lg">
-                Submit Form
-            </kaury-button>
-        </kaury-form>
+                
+                <kaury-animation type="fadeInUp" delay="0.8s" trigger="scroll">
+                    <kaury-button type="submit" variant="primary" size="lg">
+                        Envoyer le Formulaire
+                    </kaury-button>
+                </kaury-animation>
+            </kaury-form>
+        </kaury-animation>
     </div>
 </body>
 </html>`;
@@ -254,6 +377,120 @@ ${sectionsHtml}
       case 'mobile': return '375px';
       default: return '100%';
     }
+  };
+
+  const renderPreviewContent = () => {
+    return (
+      <div 
+        ref={previewRef}
+        className="transition-all duration-300 bg-white rounded-xl shadow-2xl overflow-hidden"
+        style={{ 
+          width: getPreviewWidth(),
+          maxWidth: '100%',
+          minHeight: '600px'
+        }}
+      >
+        <div className="p-8">
+          <kaury-animation 
+            type={formConfig.animation}
+            duration={formConfig.animationDuration}
+            delay={formConfig.animationDelay}
+            iteration={formConfig.animationIteration}
+            direction={formConfig.animationDirection}
+            timing={formConfig.animationTiming}
+            trigger="manual"
+          >
+            <kaury-form title={formConfig.title} description={formConfig.description}>
+              {sections.map(section => {
+                const sectionFields = fields.filter(field => field.section === section.id);
+                return (
+                  <kaury-animation 
+                    key={section.id}
+                    type={section.animation || 'fadeInUp'}
+                    duration={section.animationDuration || '0.6s'}
+                    delay={section.animationDelay || '0s'}
+                    iteration={section.animationIteration || '1'}
+                    direction={section.animationDirection || 'normal'}
+                    timing={section.animationTiming || 'ease-in-out'}
+                    trigger="manual"
+                  >
+                    <kaury-section 
+                      title={section.title}
+                      description={section.description || ''}
+                      collapsible={section.collapsible ? 'true' : undefined}
+                    >
+                      {sectionFields.map(field => (
+                        <kaury-animation 
+                          key={field.id}
+                          type={field.animation || 'fadeInUp'}
+                          duration={field.animationDuration || '0.6s'}
+                          delay={field.animationDelay || '0s'}
+                          iteration={field.animationIteration || '1'}
+                          direction={field.animationDirection || 'normal'}
+                          timing={field.animationTiming || 'ease-in-out'}
+                          trigger="manual"
+                        >
+                          {field.type === 'input' && (
+                            <kaury-input
+                              name={field.label.toLowerCase().replace(/\s+/g, '_')}
+                              label={field.label}
+                              type={field.inputType || 'text'}
+                              placeholder={field.placeholder || ''}
+                              required={field.required ? 'true' : undefined}
+                            />
+                          )}
+                          {field.type === 'textarea' && (
+                            <kaury-textarea
+                              name={field.label.toLowerCase().replace(/\s+/g, '_')}
+                              label={field.label}
+                              placeholder={field.placeholder || ''}
+                              required={field.required ? 'true' : undefined}
+                            />
+                          )}
+                          {field.type === 'select' && (
+                            <kaury-select
+                              name={field.label.toLowerCase().replace(/\s+/g, '_')}
+                              label={field.label}
+                              options={JSON.stringify(field.options?.map(opt => ({ value: opt.toLowerCase(), label: opt })) || [])}
+                              required={field.required ? 'true' : undefined}
+                            />
+                          )}
+                          {field.type === 'checkbox' && (
+                            <kaury-checkbox
+                              name={field.label.toLowerCase().replace(/\s+/g, '_')}
+                              label={field.label}
+                              value={field.label.toLowerCase().replace(/\s+/g, '_')}
+                            />
+                          )}
+                          {field.type === 'radio' && (
+                            <kaury-radio
+                              name={`radio_group_${field.section}`}
+                              label={field.label}
+                              value={field.label.toLowerCase().replace(/\s+/g, '_')}
+                            />
+                          )}
+                        </kaury-animation>
+                      ))}
+                    </kaury-section>
+                  </kaury-animation>
+                );
+              })}
+              
+              <kaury-animation 
+                type="fadeInUp"
+                duration="0.6s"
+                delay="0.8s"
+                trigger="manual"
+              >
+                <kaury-button type="submit" variant="primary" size="lg">
+                  Envoyer le Formulaire
+                </kaury-button>
+              </kaury-animation>
+            </kaury-form>
+          </kaury-animation>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -269,7 +506,7 @@ ${sectionsHtml}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h1 className="text-xl font-bold text-white">Form Builder</h1>
+              <h1 className="text-xl font-bold text-white">Constructeur de Formulaires</h1>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -300,7 +537,7 @@ ${sectionsHtml}
                 className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 flex items-center space-x-2 disabled:opacity-50"
               >
                 {isAnimating ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                <span>{isAnimating ? 'Playing...' : 'Preview'}</span>
+                <span>{isAnimating ? 'Animation...' : 'Aperçu'}</span>
               </button>
             </div>
           </div>
@@ -314,9 +551,9 @@ ${sectionsHtml}
           <div className="flex border-b border-gray-800">
             {[
               { id: 'design', label: 'Design', icon: <Palette className="w-4 h-4" /> },
-              { id: 'fields', label: 'Fields', icon: <Layers className="w-4 h-4" /> },
-              { id: 'layout', label: 'Layout', icon: <Settings className="w-4 h-4" /> },
-              { id: 'animations', label: 'Animate', icon: <Zap className="w-4 h-4" /> }
+              { id: 'fields', label: 'Champs', icon: <Layers className="w-4 h-4" /> },
+              { id: 'layout', label: 'Mise en page', icon: <Settings className="w-4 h-4" /> },
+              { id: 'animations', label: 'Animations', icon: <Zap className="w-4 h-4" /> }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -337,7 +574,7 @@ ${sectionsHtml}
             {activeTab === 'design' && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Form Title</label>
+                  <label className="block text-sm font-medium text-white mb-2">Titre du Formulaire</label>
                   <input
                     type="text"
                     value={formConfig.title}
@@ -356,7 +593,7 @@ ${sectionsHtml}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-3">Theme</label>
+                  <label className="block text-sm font-medium text-white mb-3">Thème</label>
                   <div className="grid grid-cols-2 gap-2">
                     {themes.map(theme => (
                       <button
@@ -373,7 +610,7 @@ ${sectionsHtml}
                             <div
                               key={i}
                               className="w-4 h-4 rounded-full"
-                              style={{ borderColor: formConfig.primaryColor + '80' }}
+                              style={{ backgroundColor: color }}
                             />
                           ))}
                         </div>
@@ -384,7 +621,7 @@ ${sectionsHtml}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Primary Color</label>
+                  <label className="block text-sm font-medium text-white mb-2">Couleur Primaire</label>
                   <input
                     type="color"
                     value={formConfig.primaryColor}
@@ -398,7 +635,7 @@ ${sectionsHtml}
             {activeTab === 'fields' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-white">Form Fields</h3>
+                  <h3 className="text-lg font-semibold text-white">Champs du Formulaire</h3>
                   <button
                     onClick={addField}
                     className="bg-gradient-to-r from-gray-700 to-gray-600 text-white p-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300"
@@ -425,17 +662,17 @@ ${sectionsHtml}
                         </button>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="grid grid-cols-2 gap-2 text-xs mb-3">
                         <select
                           value={field.type}
                           onChange={(e) => updateField(field.id, { type: e.target.value as any })}
                           className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white"
                         >
-                          <option value="input">Input</option>
-                          <option value="textarea">Textarea</option>
-                          <option value="select">Select</option>
-                          <option value="checkbox">Checkbox</option>
-                          <option value="radio">Radio</option>
+                          <option value="input">Saisie</option>
+                          <option value="textarea">Zone de texte</option>
+                          <option value="select">Sélection</option>
+                          <option value="checkbox">Case à cocher</option>
+                          <option value="radio">Bouton radio</option>
                         </select>
                         
                         <select
@@ -447,6 +684,24 @@ ${sectionsHtml}
                             <option key={anim} value={anim}>{anim}</option>
                           ))}
                         </select>
+                      </div>
+
+                      {/* Contrôles d'animation avancés */}
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <input
+                          type="text"
+                          placeholder="Durée (0.6s)"
+                          value={field.animationDuration || ''}
+                          onChange={(e) => updateField(field.id, { animationDuration: e.target.value })}
+                          className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white placeholder-gray-500"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Délai (0s)"
+                          value={field.animationDelay || ''}
+                          onChange={(e) => updateField(field.id, { animationDelay: e.target.value })}
+                          className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white placeholder-gray-500"
+                        />
                       </div>
                     </div>
                   ))}
@@ -465,7 +720,7 @@ ${sectionsHtml}
                   
                   {sections.map(section => (
                     <div key={section.id} className="bg-gray-800/50 rounded p-3 mb-2">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center mb-2">
                         <input
                           type="text"
                           value={section.title}
@@ -479,6 +734,24 @@ ${sectionsHtml}
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
+                      <div className="grid grid-cols-2 gap-1">
+                        <select
+                          value={section.animation || 'fadeInUp'}
+                          onChange={(e) => updateSection(section.id, { animation: e.target.value })}
+                          className="bg-gray-800 border border-gray-700 rounded px-1 py-1 text-white text-xs"
+                        >
+                          {animations.map(anim => (
+                            <option key={anim} value={anim}>{anim}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Délai"
+                          value={section.animationDelay || ''}
+                          onChange={(e) => updateSection(section.id, { animationDelay: e.target.value })}
+                          className="bg-gray-800 border border-gray-700 rounded px-1 py-1 text-white text-xs placeholder-gray-500"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -488,41 +761,41 @@ ${sectionsHtml}
             {activeTab === 'layout' && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Spacing</label>
+                  <label className="block text-sm font-medium text-white mb-2">Espacement</label>
                   <select
                     value={formConfig.spacing}
                     onChange={(e) => setFormConfig({ ...formConfig, spacing: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                   >
                     <option value="compact">Compact</option>
-                    <option value="comfortable">Comfortable</option>
-                    <option value="spacious">Spacious</option>
+                    <option value="comfortable">Confortable</option>
+                    <option value="spacious">Spacieux</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Border Radius</label>
+                  <label className="block text-sm font-medium text-white mb-2">Rayon des Bordures</label>
                   <select
                     value={formConfig.borderRadius}
                     onChange={(e) => setFormConfig({ ...formConfig, borderRadius: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                   >
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
+                    <option value="sm">Petit</option>
+                    <option value="md">Moyen</option>
+                    <option value="lg">Grand</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Shadow</label>
+                  <label className="block text-sm font-medium text-white mb-2">Ombre</label>
                   <select
                     value={formConfig.shadow}
                     onChange={(e) => setFormConfig({ ...formConfig, shadow: e.target.value })}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                   >
-                    <option value="sm">Small</option>
-                    <option value="md">Medium</option>
-                    <option value="lg">Large</option>
+                    <option value="sm">Petite</option>
+                    <option value="md">Moyenne</option>
+                    <option value="lg">Grande</option>
                   </select>
                 </div>
               </div>
@@ -531,7 +804,7 @@ ${sectionsHtml}
             {activeTab === 'animations' && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Form Animation</label>
+                  <label className="block text-sm font-medium text-white mb-2">Animation du Formulaire</label>
                   <select
                     value={formConfig.animation}
                     onChange={(e) => setFormConfig({ ...formConfig, animation: e.target.value })}
@@ -543,19 +816,68 @@ ${sectionsHtml}
                   </select>
                 </div>
 
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">Durée</label>
+                    <input
+                      type="text"
+                      value={formConfig.animationDuration}
+                      onChange={(e) => setFormConfig({ ...formConfig, animationDuration: e.target.value })}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                      placeholder="0.6s"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">Délai</label>
+                    <input
+                      type="text"
+                      value={formConfig.animationDelay}
+                      onChange={(e) => setFormConfig({ ...formConfig, animationDelay: e.target.value })}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                      placeholder="0s"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Timing</label>
+                  <select
+                    value={formConfig.animationTiming}
+                    onChange={(e) => setFormConfig({ ...formConfig, animationTiming: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    {animationTimings.map(timing => (
+                      <option key={timing} value={timing}>{timing}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">Direction</label>
+                  <select
+                    value={formConfig.animationDirection}
+                    onChange={(e) => setFormConfig({ ...formConfig, animationDirection: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  >
+                    {animationDirections.map(direction => (
+                      <option key={direction} value={direction}>{direction}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="bg-gray-800/50 rounded-lg p-4">
-                  <h4 className="text-white font-medium mb-3">Animation Preview</h4>
+                  <h4 className="text-white font-medium mb-3">Aperçu des Animations</h4>
                   <button
                     onClick={playAnimation}
                     disabled={isAnimating}
                     className="w-full bg-gradient-to-r from-gray-700 to-gray-600 text-white py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 disabled:opacity-50"
                   >
-                    {isAnimating ? 'Playing...' : 'Play Animations'}
+                    {isAnimating ? 'Animation en cours...' : 'Jouer les Animations'}
                   </button>
                 </div>
 
                 <div className="text-xs text-gray-400">
-                  <p>Animations are applied to individual fields and sections. Use the Fields tab to configure per-element animations.</p>
+                  <p>Les animations sont appliquées aux champs et sections individuels. Utilisez l'onglet Champs pour configurer les animations par élément.</p>
                 </div>
               </div>
             )}
@@ -567,83 +889,7 @@ ${sectionsHtml}
           {/* Preview */}
           <div className="flex-1 p-6 overflow-auto">
             <div className="flex justify-center">
-              <div 
-                ref={previewRef}
-                className="transition-all duration-300 bg-white rounded-xl shadow-2xl overflow-hidden"
-                style={{ 
-                  width: getPreviewWidth(),
-                  maxWidth: '100%',
-                  minHeight: '600px'
-                }}
-              >
-                <div className="p-8">
-                  <div data-animate={formConfig.animation}>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{formConfig.title}</h1>
-                    <p className="text-gray-600 mb-8">{formConfig.description}</p>
-                  </div>
-
-                  {sections.map(section => {
-                    const sectionFields = fields.filter(field => field.section === section.id);
-                    return (
-                      <div key={section.id} className="mb-8" data-animate={section.animation}>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">{section.title}</h2>
-                        <div className="space-y-4">
-                          {sectionFields.map(field => (
-                            <div key={field.id} data-animate={field.animation}>
-                              {field.type === 'input' && (
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                  </label>
-                                  <input
-                                    type={field.inputType}
-                                    placeholder={field.placeholder}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    style={{ borderColor: formConfig.primaryColor + '40' }}
-                                  />
-                                </div>
-                              )}
-                              {field.type === 'textarea' && (
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                  </label>
-                                  <textarea
-                                    placeholder={field.placeholder}
-                                    rows={4}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                    style={{ borderColor: formConfig.primaryColor + '40' }}
-                                  />
-                                </div>
-                              )}
-                              {field.type === 'select' && (
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                                  </label>
-                                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option>Select an option</option>
-                                    {field.options?.map((option, i) => (
-                                      <option key={i} value={option}>{option}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  <button
-                    className="w-full py-3 px-6 rounded-lg text-white font-semibold transition-all duration-300 hover:scale-105"
-                    style={{ backgroundColor: formConfig.primaryColor }}
-                  >
-                    Submit Form
-                  </button>
-                </div>
-              </div>
+              {renderPreviewContent()}
             </div>
           </div>
 
@@ -651,13 +897,13 @@ ${sectionsHtml}
           <div className="bg-gray-900/50 backdrop-blur-sm border-t border-gray-800 p-4">
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-400">
-                {fields.length} fields • {sections.length} sections
+                {fields.length} champs • {sections.length} sections
               </div>
               
               <div className="flex space-x-3">
                 <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2">
                   <Save className="w-4 h-4" />
-                  <span>Save</span>
+                  <span>Sauvegarder</span>
                 </button>
                 
                 <button 
@@ -668,7 +914,7 @@ ${sectionsHtml}
                   className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 flex items-center space-x-2"
                 >
                   <Code className="w-4 h-4" />
-                  <span>Export Code</span>
+                  <span>Exporter le Code</span>
                 </button>
               </div>
             </div>

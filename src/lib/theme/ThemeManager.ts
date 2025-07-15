@@ -1,5 +1,5 @@
 import type { KauryTheme } from './types';
-import { darkTheme, minimalTheme, corporateTheme } from './presets';
+import { darkTheme, minimalTheme, corporateTheme, glassmorphismTheme } from './presets';
 
 export class ThemeManager {
   private static instance: ThemeManager;
@@ -79,6 +79,7 @@ export class ThemeManager {
     this.themes.set('dark', darkTheme);
     this.themes.set('minimal', minimalTheme);
     this.themes.set('corporate', corporateTheme);
+    this.themes.set('glassmorphism', glassmorphismTheme);
   }
   
   registerTheme(theme: KauryTheme) {

@@ -73,9 +73,12 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     title: 'Formulaire de Contact',
     description: 'Contactez-nous facilement',
     theme: 'default',
-    primaryColor: '#3B82F6',
-    secondaryColor: '#64748B',
-    accentColor: '#F59E0B',
+    customPrimaryColor: '',
+    customSecondaryColor: '',
+    customAccentColor: '',
+    customErrorColor: '',
+    customSuccessColor: '',
+    customWarningColor: '',
     inputBackgroundColor: '',
     spacing: 'comfortable',
     borderRadius: 'md',
@@ -154,7 +157,8 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     { name: 'Défaut', value: 'default', colors: ['#3B82F6', '#64748B', '#F59E0B'] },
     { name: 'Sombre', value: 'dark', colors: ['#60A5FA', '#94A3B8', '#FBBF24'] },
     { name: 'Minimal', value: 'minimal', colors: ['#000000', '#666666', '#000000'] },
-    { name: 'Corporate', value: 'corporate', colors: ['#1E40AF', '#475569', '#DC2626'] }
+    { name: 'Corporate', value: 'corporate', colors: ['#1E40AF', '#475569', '#DC2626'] },
+    { name: 'Glassmorphism', value: 'glassmorphism', colors: ['#3B82F6', '#64748B', '#F59E0B'] }
   ];
 
   const animations = [
@@ -188,17 +192,18 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     const selectedTheme = themeManager.getTheme(formConfig.theme);
 
     if (selectedTheme) {
-      root.style.setProperty('--kaury-color-primary', selectedTheme.colors.primary);
-      root.style.setProperty('--kaury-color-secondary', selectedTheme.colors.secondary);
-      root.style.setProperty('--kaury-color-accent', selectedTheme.colors.accent);
+      // Appliquer les couleurs du thème
+      root.style.setProperty('--kaury-color-primary', formConfig.customPrimaryColor || selectedTheme.colors.primary);
+      root.style.setProperty('--kaury-color-secondary', formConfig.customSecondaryColor || selectedTheme.colors.secondary);
+      root.style.setProperty('--kaury-color-accent', formConfig.customAccentColor || selectedTheme.colors.accent);
+      root.style.setProperty('--kaury-color-error', formConfig.customErrorColor || selectedTheme.colors.error);
+      root.style.setProperty('--kaury-color-success', formConfig.customSuccessColor || selectedTheme.colors.success);
+      root.style.setProperty('--kaury-color-warning', formConfig.customWarningColor || selectedTheme.colors.warning);
       root.style.setProperty('--kaury-color-surface', selectedTheme.colors.surface);
       root.style.setProperty('--kaury-color-text', selectedTheme.colors.text);
       root.style.setProperty('--kaury-color-textSecondary', selectedTheme.colors.textSecondary);
       root.style.setProperty('--kaury-color-border', selectedTheme.colors.border);
       root.style.setProperty('--kaury-color-focus', selectedTheme.colors.focus);
-      root.style.setProperty('--kaury-color-error', selectedTheme.colors.error);
-      root.style.setProperty('--kaury-color-warning', selectedTheme.colors.warning);
-      root.style.setProperty('--kaury-color-success', selectedTheme.colors.success);
 
       // Appliquer la couleur de fond personnalisée ou celle du thème
       if (formConfig.inputBackgroundColor) {
@@ -231,7 +236,17 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     
     // Appliquer la police personnalisée
     root.style.setProperty('--kaury-font-family', `${formConfig.font}, system-ui, sans-serif`);
-  }, [formConfig.theme, formConfig.font, formConfig.inputBackgroundColor]);
+  }, [
+    formConfig.theme, 
+    formConfig.font, 
+    formConfig.inputBackgroundColor,
+    formConfig.customPrimaryColor,
+    formConfig.customSecondaryColor,
+    formConfig.customAccentColor,
+    formConfig.customErrorColor,
+    formConfig.customSuccessColor,
+    formConfig.customWarningColor
+  ]);
 
   const addField = () => {
     const newField: FormField = {
@@ -455,14 +470,23 @@ ${sectionsHtml}
   };
 
   const renderPreviewContent = () => {
+    const isGlassmorphism = formConfig.theme === 'glassmorphism';
+    
     return (
       <div 
         ref={previewRef}
-        className="transition-all duration-300 bg-white rounded-xl shadow-2xl overflow-hidden"
+        className={`transition-all duration-300 rounded-xl shadow-2xl overflow-hidden ${
+          isGlassmorphism ? 'bg-white/10' : 'bg-white'
+        }`}
         style={{ 
           width: getPreviewWidth(),
           maxWidth: '100%',
-          minHeight: '600px'
+          minHeight: '600px',
+          ...(isGlassmorphism && {
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          })
         }}
       >
         <div className="p-8">

@@ -409,16 +409,18 @@ ${fieldsHtml}
     <script src="https://cdn.jsdelivr.net/npm/kauryui@latest/dist/kauryui.js"></script>
     <style>
         :root {
-            --kaury-color-primary: ${formConfig.primaryColor};
-            --kaury-color-secondary: ${formConfig.secondaryColor};
-            --kaury-color-accent: ${formConfig.accentColor};
+            --kaury-color-primary: ${formConfig.customPrimaryColor || '#3B82F6'};
+            --kaury-color-secondary: ${formConfig.customSecondaryColor || '#64748B'};
+            --kaury-color-accent: ${formConfig.customAccentColor || '#F59E0B'};
             --kaury-font-family: ${formConfig.font}, system-ui, sans-serif;
             ${formConfig.inputBackgroundColor ? `--kaury-color-background: ${formConfig.inputBackgroundColor};` : ''}
         }
         
         body {
             font-family: var(--kaury-font-family);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: ${formConfig.theme === 'glassmorphism' 
+              ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%)' 
+              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
             min-height: 100vh;
             padding: 2rem;
             margin: 0;
@@ -427,10 +429,11 @@ ${fieldsHtml}
         .form-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: ${formConfig.theme === 'glassmorphism' ? 'rgba(255, 255, 255, 0.1)' : 'white'};
             border-radius: ${formConfig.borderRadius === 'sm' ? '8px' : formConfig.borderRadius === 'lg' ? '16px' : '12px'};
             box-shadow: ${formConfig.shadow === 'sm' ? '0 1px 3px rgba(0,0,0,0.1)' : formConfig.shadow === 'lg' ? '0 20px 25px rgba(0,0,0,0.15)' : '0 10px 15px rgba(0,0,0,0.1)'};
             padding: 2rem;
+            ${formConfig.theme === 'glassmorphism' ? 'backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);' : ''}
         }
     </style>
 </head>

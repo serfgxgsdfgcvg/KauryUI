@@ -68,6 +68,356 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const [customPreviewWidth, setCustomPreviewWidth] = useState(800);
   const [isAnimating, setIsAnimating] = useState(false);
   
+  // Fonction utilitaire pour échapper le HTML
+  const escapeHtml = (text: string): string => {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  };
+
+  // Fonction pour gérer l'exportation du code
+  const handleExportCode = () => {
+    const code = generateCode();
+    
+    // Ouvrir une nouvelle fenêtre
+    const newWindow = window.open('', '_blank');
+    if (!newWindow) {
+      alert('Veuillez autoriser les pop-ups pour exporter le code');
+      return;
+    }
+
+    // Contenu HTML de la page d'exportation
+    const exportPageContent = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Exporté - ${formConfig.title}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #374151;
+            border: 2px solid #d1d5db;
+        }
+        
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+        
+        .code-container {
+            background: #1f2937;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .code-header {
+            background: #374151;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            border-bottom: 1px solid #4b5563;
+        }
+        
+        .code-title {
+            color: #f9fafb;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .code-textarea {
+            width: 100%;
+            height: 500px;
+            background: #1f2937;
+            color: #f9fafb;
+            border: none;
+            padding: 1.5rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+        
+        .code-textarea:focus {
+            background: #111827;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .success-message.show {
+            display: flex;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Code Exporté</h1>
+            <p>Formulaire : ${formConfig.title}</p>
+        </div>
+        
+        <div class="content">
+            <div class="actions">
+                <button class="btn btn-primary" onclick="copyCode()">
+                    📋 Copier le Code
+                </button>
+                <button class="btn btn-secondary" onclick="downloadCode()">
+                    💾 Télécharger HTML
+                </button>
+                <button class="btn btn-outline" onclick="previewCode()">
+                    👁️ Aperçu
+                </button>
+                <button class="btn btn-outline" onclick="window.close()">
+                    ❌ Fermer
+                </button>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Code copié dans le presse-papiers !
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="code-title">📄 ${formConfig.title.replace(/\s+/g, '_').toLowerCase()}.html</div>
+                </div>
+                <textarea class="code-textarea" id="codeTextarea" readonly>${escapeHtml(code)}</textarea>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">${fields.length}</div>
+                    <div class="stat-label">Champs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${sections.length}</div>
+                    <div class="stat-label">Sections</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${formConfig.theme}</div>
+                    <div class="stat-label">Thème</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${Math.round(code.length / 1024)}KB</div>
+                    <div class="stat-label">Taille</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode() {
+            const textarea = document.getElementById('codeTextarea');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showSuccessMessage();
+            } catch (err) {
+                // Fallback pour les navigateurs modernes
+                navigator.clipboard.writeText(textarea.value).then(() => {
+                    showSuccessMessage();
+                }).catch(() => {
+                    alert('Impossible de copier le code. Veuillez le sélectionner manuellement.');
+                });
+            }
+        }
+        
+        function downloadCode() {
+            const code = document.getElementById('codeTextarea').value;
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '${formConfig.title.replace(/\s+/g, '_').toLowerCase()}.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccessMessage('Fichier téléchargé !');
+        }
+        
+        function previewCode() {
+            const code = document.getElementById('codeTextarea').value;
+            const previewWindow = window.open('', '_blank');
+            previewWindow.document.write(code);
+            previewWindow.document.close();
+        }
+        
+        function showSuccessMessage(message = 'Code copié dans le presse-papiers !') {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.textContent = '✅ ' + message;
+            successMsg.classList.add('show');
+            
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Sélectionner tout le code au clic
+        document.getElementById('codeTextarea').addEventListener('click', function() {
+            this.select();
+        });
+    </script>
+</body>
+</html>`;
+
+    // Écrire le contenu dans la nouvelle fenêtre
+    newWindow.document.write(exportPageContent);
+    newWindow.document.close();
+  };
+
   // Configuration du formulaire avec propriétés d'animation étendues
   const [formConfig, setFormConfig] = useState({
     title: 'Formulaire de Contact',
@@ -1126,19 +1476,11 @@ ${sectionsHtml}
               </div>
               
               <div className="flex space-x-3">
-                <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2">
-                  <Save className="w-4 h-4" />
-                  <span>Sauvegarder</span>
-                </button>
-                
                 <button 
-                  onClick={() => {
-                    const code = generateCode();
-                    navigator.clipboard.writeText(code);
-                  }}
+                  onClick={handleExportCode}
                   className="bg-gradient-to-r from-gray-700 to-gray-600 text-white px-4 py-2 rounded-lg hover:from-gray-600 hover:to-gray-500 transition-all duration-300 flex items-center space-x-2"
                 >
-                  <Code className="w-4 h-4" />
+                  <Download className="w-4 h-4" />
                   <span>Exporter le Code</span>
                 </button>
               </div>

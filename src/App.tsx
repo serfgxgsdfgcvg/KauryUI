@@ -7,21 +7,17 @@ type View = 'landing' | 'form-builder';
 function App() {
   const [currentView, setCurrentView] = useState<View>('landing');
 
-  const navigateToFormBuilder = () => {
-    setCurrentView('form-builder');
-  };
-
-  const navigateToLanding = () => {
-    setCurrentView('landing');
+  const handleNavigation = (view: View) => {
+    setCurrentView(view);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {currentView === 'landing' && (
-        <LandingPage onNavigateToFormBuilder={navigateToFormBuilder} />
+        <LandingPage onNavigate={handleNavigation} />
       )}
       {currentView === 'form-builder' && (
-        <FormBuilder onNavigateToLanding={navigateToLanding} />
+        <FormBuilder onNavigate={handleNavigation} />
       )}
     </div>
   );

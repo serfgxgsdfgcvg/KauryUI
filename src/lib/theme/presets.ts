@@ -106,6 +106,59 @@ export const minimalTheme: KauryTheme = {
   }
 };
 
+export const glassmorphismTheme: KauryTheme = {
+  name: 'glassmorphism',
+  colors: {
+    primary: '#3B82F6',
+    secondary: '#64748B',
+    accent: '#F59E0B',
+    background: 'rgba(255, 255, 255, 0.1)',
+    surface: 'rgba(255, 255, 255, 0.05)',
+    text: '#1E293B',
+    textSecondary: '#64748B',
+    border: 'rgba(255, 255, 255, 0.2)',
+    error: '#EF4444',
+    warning: '#F59E0B',
+    success: '#10B981',
+    focus: '#3B82F6'
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px'
+  },
+  typography: {
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+    fontSize: {
+      sm: '14px',
+      md: '16px',
+      lg: '18px'
+    },
+    fontWeight: {
+      normal: '400',
+      medium: '500',
+      bold: '600'
+    }
+  },
+  borderRadius: {
+    sm: '8px',
+    md: '12px',
+    lg: '16px'
+  },
+  shadows: {
+    sm: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    md: '0 8px 32px rgba(0, 0, 0, 0.12)',
+    lg: '0 16px 64px rgba(0, 0, 0, 0.16)'
+  },
+  transitions: {
+    fast: '150ms ease-in-out',
+    medium: '250ms ease-in-out',
+    slow: '350ms ease-in-out'
+  }
+};
+
 export const corporateTheme: KauryTheme = {
   name: 'corporate',
   colors: {

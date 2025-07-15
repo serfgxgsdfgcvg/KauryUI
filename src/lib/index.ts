@@ -23,4 +23,4 @@ import './components/KauryAnimation';
 // Export theme utilities
 export { ThemeManager } from './theme/ThemeManager';
 export type { KauryTheme } from './theme/types';
-export { darkTheme, minimalTheme, corporateTheme } from './theme/presets';
+export { darkTheme, minimalTheme, corporateTheme, glassmorphismTheme } from './theme/presets';

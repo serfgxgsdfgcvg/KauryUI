@@ -35,7 +35,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
   
-  // Thème sombre par défaut
+  // Dark theme by default
   const [themeColors, setThemeColors] = useState({
     primary: '#60A5FA',
     secondary: '#94A3B8',
@@ -53,7 +53,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     shadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
   });
 
-  // Animation settings étendues
+  // Extended animation settings
   const [animationSettings, setAnimationSettings] = useState({
     type: 'fadeIn',
     duration: '0.5s',
@@ -82,7 +82,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
       type,
       label: `${type.charAt(0).toUpperCase() + type.slice(1)}`,
       name: `field_${fields.length + 1}`,
-      placeholder: type === 'button' ? undefined : `Entrez votre ${type}...`,
+      placeholder: type === 'button' ? undefined : `Enter your ${type}...`,
       required: false,
       options: (type === 'select' || type === 'checkbox' || type === 'radio') ? [
         { label: 'Option 1', value: 'option1' },
@@ -145,7 +145,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Formulaire</title>
+    <title>My Form</title>
     <script src="https://cdn.jsdelivr.net/npm/kauryui@latest/dist/kauryui.js"></script>
     <style>
         :root {
@@ -189,7 +189,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             trigger="${animationSettings.trigger}"
             ${animationSettings.hidden ? 'style="display: none;"' : ''}
         >
-            <kaury-form title="Mon Formulaire">
+            <kaury-form title="My Form">
 `;
 
     fields.forEach(field => {
@@ -264,9 +264,9 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(generatedCode);
-      alert('Code copié !');
+      alert('Code copied!');
     } catch (err) {
-      console.error('Erreur:', err);
+      console.error('Error:', err);
     }
   };
 
@@ -275,7 +275,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'mon-formulaire.html';
+    a.download = 'my-form.html';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -286,7 +286,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-gray-950 flex">
-      {/* Sidebar avec animation */}
+      {/* Sidebar with animation */}
       <div className="w-80 bg-gray-800 border-r border-gray-700 flex flex-col animate-slide-in-left">
         <div className="p-4 border-b border-gray-700">
           <button
@@ -294,16 +294,16 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             className="flex items-center space-x-2 text-gray-400 hover:text-gray-200 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Retour</span>
+            <span>Back</span>
           </button>
-          <h1 className="text-xl font-bold text-white">Créateur de Formulaire</h1>
+          <h1 className="text-xl font-bold text-white">Form Builder</h1>
         </div>
 
         {/* Tabs */}
         <div className="flex border-b border-gray-700">
           {[
-            { id: 'fields', label: 'Champs', icon: Settings },
-            { id: 'theme', label: 'Couleurs', icon: Palette },
+            { id: 'fields', label: 'Fields', icon: Settings },
+            { id: 'theme', label: 'Colors', icon: Palette },
             { id: 'layout', label: 'Style', icon: Layout },
             { id: 'animation', label: 'Animation', icon: Zap }
           ].map(tab => (
@@ -323,21 +323,21 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
-          {/* Contenu des onglets avec animation */}
+          {/* Tab content with animation */}
           <div key={activeTab} className="animate-fade-in">
             {/* Fields Tab */}
             {activeTab === 'fields' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-sm font-medium text-white mb-3">Ajouter un champ</h3>
+                  <h3 className="text-sm font-medium text-white mb-3">Add a field</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { type: 'input', label: 'Texte' },
-                      { type: 'textarea', label: 'Zone de texte' },
-                      { type: 'select', label: 'Liste' },
-                      { type: 'checkbox', label: 'Cases' },
-                      { type: 'radio', label: 'Boutons' },
-                      { type: 'button', label: 'Bouton' }
+                      { type: 'input', label: 'Text' },
+                      { type: 'textarea', label: 'Textarea' },
+                      { type: 'select', label: 'Select' },
+                      { type: 'checkbox', label: 'Checkbox' },
+                      { type: 'radio', label: 'Radio' },
+                      { type: 'button', label: 'Button' }
                     ].map(({ type, label }) => (
                       <button
                         key={type}
@@ -352,7 +352,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-white mb-3">Vos champs</h3>
+                  <h3 className="text-sm font-medium text-white mb-3">Your fields</h3>
                   <div className="space-y-2">
                     {fields.map(field => (
                       <div
@@ -383,49 +383,49 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                     ))}
                     {fields.length === 0 && (
                       <div className="text-center py-8 text-gray-400">
-                        <p>Aucun champ ajouté</p>
-                        <p className="text-xs">Cliquez sur un bouton ci-dessus pour commencer</p>
+                        <p>No fields added</p>
+                        <p className="text-xs">Click a button above to get started</p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Field Configuration avec animation */}
+                {/* Field Configuration with animation */}
                 {selectedFieldData && (
                   <div className="border-t border-gray-700 pt-4 animate-fade-in">
-                    <h3 className="text-sm font-medium text-white mb-3">Modifier le champ</h3>
+                    <h3 className="text-sm font-medium text-white mb-3">Edit field</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Titre</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Label</label>
                         <input
                           type="text"
                           value={selectedFieldData.label}
                           onChange={(e) => updateField(selectedFieldData.id, { label: e.target.value })}
                           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Titre du champ"
+                          placeholder="Field label"
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Nom technique</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
                         <input
                           type="text"
                           value={selectedFieldData.name}
                           onChange={(e) => updateField(selectedFieldData.id, { name: e.target.value })}
                           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="nom_du_champ"
+                          placeholder="field_name"
                         />
                       </div>
                       
                       {selectedFieldData.type !== 'button' && (
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-1">Texte d'aide</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-1">Placeholder</label>
                           <input
                             type="text"
                             value={selectedFieldData.placeholder || ''}
                             onChange={(e) => updateField(selectedFieldData.id, { placeholder: e.target.value })}
                             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Texte affiché dans le champ vide"
+                            placeholder="Text shown in empty field"
                           />
                         </div>
                       )}
@@ -437,19 +437,19 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                           onChange={(e) => updateField(selectedFieldData.id, { required: e.target.checked })}
                           className="mr-2 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500"
                         />
-                        <label className="text-sm font-medium text-gray-300">Champ obligatoire</label>
+                        <label className="text-sm font-medium text-gray-300">Required field</label>
                       </div>
 
-                      {/* Options pour select, checkbox, radio */}
+                      {/* Options for select, checkbox, radio */}
                       {(selectedFieldData.type === 'select' || selectedFieldData.type === 'checkbox' || selectedFieldData.type === 'radio') && (
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <label className="block text-sm font-medium text-gray-300">Options disponibles</label>
+                            <label className="block text-sm font-medium text-gray-300">Available options</label>
                             <button
                               onClick={() => addOption(selectedFieldData.id)}
                               className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
                             >
-                              + Ajouter
+                              + Add
                             </button>
                           </div>
                           <div className="space-y-2">
@@ -459,14 +459,14 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                                   type="text"
                                   value={option.label}
                                   onChange={(e) => updateOption(selectedFieldData.id, index, 'label', e.target.value)}
-                                  placeholder="Texte affiché"
+                                  placeholder="Display text"
                                   className="flex-1 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:ring-1 focus:ring-blue-500"
                                 />
                                 <input
                                   type="text"
                                   value={option.value}
                                   onChange={(e) => updateOption(selectedFieldData.id, index, 'value', e.target.value)}
-                                  placeholder="Valeur"
+                                  placeholder="Value"
                                   className="flex-1 px-2 py-1 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:ring-1 focus:ring-blue-500"
                                 />
                                 <button
@@ -481,32 +481,32 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                         </div>
                       )}
 
-                      {/* Options spécifiques aux boutons */}
+                      {/* Button-specific options */}
                       {selectedFieldData.type === 'button' && (
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Style</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Variant</label>
                             <select
                               value={selectedFieldData.variant || 'primary'}
                               onChange={(e) => updateField(selectedFieldData.id, { variant: e.target.value })}
                               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                             >
-                              <option value="primary">Bleu (principal)</option>
-                              <option value="secondary">Gris (secondaire)</option>
-                              <option value="outline">Contour</option>
-                              <option value="ghost">Transparent</option>
+                              <option value="primary">Primary (blue)</option>
+                              <option value="secondary">Secondary (gray)</option>
+                              <option value="outline">Outline</option>
+                              <option value="ghost">Ghost</option>
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-1">Taille</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Size</label>
                             <select
                               value={selectedFieldData.size || 'md'}
                               onChange={(e) => updateField(selectedFieldData.id, { size: e.target.value })}
                               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                             >
-                              <option value="sm">Petit</option>
-                              <option value="md">Moyen</option>
-                              <option value="lg">Grand</option>
+                              <option value="sm">Small</option>
+                              <option value="md">Medium</option>
+                              <option value="lg">Large</option>
                             </select>
                           </div>
                         </div>
@@ -520,15 +520,15 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             {/* Theme Tab */}
             {activeTab === 'theme' && (
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-white mb-3">Personnaliser les couleurs</h3>
+                <h3 className="text-sm font-medium text-white mb-3">Customize colors</h3>
                 <div className="space-y-4">
                   {[
-                    { key: 'primary', label: 'Couleur principale', description: 'Boutons et liens' },
-                    { key: 'secondary', label: 'Couleur secondaire', description: 'Éléments moins importants' },
-                    { key: 'background', label: 'Arrière-plan', description: 'Fond de la page' },
-                    { key: 'text', label: 'Texte', description: 'Couleur du texte principal' },
-                    { key: 'border', label: 'Bordures', description: 'Contours des champs' },
-                    { key: 'error', label: 'Erreurs', description: 'Messages d\'erreur' }
+                    { key: 'primary', label: 'Primary color', description: 'Buttons and links' },
+                    { key: 'secondary', label: 'Secondary color', description: 'Less important elements' },
+                    { key: 'background', label: 'Background', description: 'Page background' },
+                    { key: 'text', label: 'Text', description: 'Main text color' },
+                    { key: 'border', label: 'Borders', description: 'Field outlines' },
+                    { key: 'error', label: 'Error', description: 'Error messages' }
                   ].map(({ key, label, description }) => (
                     <div key={key} className="p-3 border border-gray-600 rounded-lg bg-gray-800">
                       <label className="block text-sm font-medium text-white mb-1">{label}</label>
@@ -557,24 +557,24 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             {/* Layout Tab */}
             {activeTab === 'layout' && (
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-white mb-3">Style et mise en page</h3>
+                <h3 className="text-sm font-medium text-white mb-3">Style and layout</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Police</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Font</label>
                     <select
                       value={layoutSettings.fontFamily}
                       onChange={(e) => setLayoutSettings(prev => ({ ...prev, fontFamily: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="Inter, sans-serif">Inter (moderne)</option>
-                      <option value="Arial, sans-serif">Arial (classique)</option>
-                      <option value="Georgia, serif">Georgia (élégante)</option>
-                      <option value="'Courier New', monospace">Courier (technique)</option>
+                      <option value="Inter, sans-serif">Inter (modern)</option>
+                      <option value="Arial, sans-serif">Arial (classic)</option>
+                      <option value="Georgia, serif">Georgia (elegant)</option>
+                      <option value="'Courier New', monospace">Courier (technical)</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Espacement</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Spacing</label>
                     <select
                       value={layoutSettings.spacing}
                       onChange={(e) => setLayoutSettings(prev => ({ ...prev, spacing: e.target.value }))}
@@ -582,36 +582,36 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                     >
                       <option value="8px">Compact</option>
                       <option value="16px">Normal</option>
-                      <option value="24px">Aéré</option>
-                      <option value="32px">Très aéré</option>
+                      <option value="24px">Spacious</option>
+                      <option value="32px">Very spacious</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Coins arrondis</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Border radius</label>
                     <select
                       value={layoutSettings.borderRadius}
                       onChange={(e) => setLayoutSettings(prev => ({ ...prev, borderRadius: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="0px">Carrés</option>
-                      <option value="4px">Légèrement arrondis</option>
-                      <option value="8px">Arrondis</option>
-                      <option value="16px">Très arrondis</option>
+                      <option value="0px">Square</option>
+                      <option value="4px">Slightly rounded</option>
+                      <option value="8px">Rounded</option>
+                      <option value="16px">Very rounded</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Ombre</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Shadow</label>
                     <select
                       value={layoutSettings.shadow}
                       onChange={(e) => setLayoutSettings(prev => ({ ...prev, shadow: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="none">Aucune</option>
-                      <option value="0 1px 3px rgba(0, 0, 0, 0.3)">Légère</option>
-                      <option value="0 4px 6px rgba(0, 0, 0, 0.3)">Normale</option>
-                      <option value="0 10px 15px rgba(0, 0, 0, 0.3)">Forte</option>
+                      <option value="none">None</option>
+                      <option value="0 1px 3px rgba(0, 0, 0, 0.3)">Light</option>
+                      <option value="0 4px 6px rgba(0, 0, 0, 0.3)">Normal</option>
+                      <option value="0 10px 15px rgba(0, 0, 0, 0.3)">Strong</option>
                     </select>
                   </div>
                 </div>
@@ -621,56 +621,56 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             {/* Animation Tab */}
             {activeTab === 'animation' && (
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-white mb-3">Animation d'apparition</h3>
+                <h3 className="text-sm font-medium text-white mb-3">Entrance animation</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Type d'animation</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Animation type</label>
                     <select
                       value={animationSettings.type}
                       onChange={(e) => setAnimationSettings(prev => ({ ...prev, type: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="fadeIn">Apparition en fondu</option>
-                      <option value="fadeInUp">Apparition du bas</option>
-                      <option value="fadeInDown">Apparition du haut</option>
-                      <option value="slideInLeft">Glissement de la gauche</option>
-                      <option value="slideInRight">Glissement de la droite</option>
-                      <option value="scaleIn">Zoom d'apparition</option>
-                      <option value="bounceIn">Rebond d'apparition</option>
+                      <option value="fadeIn">Fade in</option>
+                      <option value="fadeInUp">Fade in from bottom</option>
+                      <option value="fadeInDown">Fade in from top</option>
+                      <option value="slideInLeft">Slide from left</option>
+                      <option value="slideInRight">Slide from right</option>
+                      <option value="scaleIn">Scale in</option>
+                      <option value="bounceIn">Bounce in</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Vitesse</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Speed</label>
                     <select
                       value={animationSettings.duration}
                       onChange={(e) => setAnimationSettings(prev => ({ ...prev, duration: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="0.3s">Rapide</option>
+                      <option value="0.3s">Fast</option>
                       <option value="0.5s">Normal</option>
-                      <option value="0.8s">Lent</option>
-                      <option value="1.2s">Très lent</option>
+                      <option value="0.8s">Slow</option>
+                      <option value="1.2s">Very slow</option>
                     </select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Style d'animation</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Timing function</label>
                     <select
                       value={animationSettings.timing}
                       onChange={(e) => setAnimationSettings(prev => ({ ...prev, timing: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="ease">Naturel</option>
-                      <option value="ease-in">Démarrage lent</option>
-                      <option value="ease-out">Fin lente</option>
-                      <option value="ease-in-out">Démarrage et fin lents</option>
-                      <option value="linear">Constant</option>
+                      <option value="ease">Natural</option>
+                      <option value="ease-in">Slow start</option>
+                      <option value="ease-out">Slow end</option>
+                      <option value="ease-in-out">Slow start and end</option>
+                      <option value="linear">Linear</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Délai</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Delay</label>
                     <input
                       type="text"
                       value={animationSettings.delay}
@@ -681,7 +681,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Répétition</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Iteration</label>
                     <input
                       type="text"
                       value={animationSettings.iteration}
@@ -692,17 +692,17 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Déclencheur</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Trigger</label>
                     <select
                       value={animationSettings.trigger}
                       onChange={(e) => setAnimationSettings(prev => ({ ...prev, trigger: e.target.value }))}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="load">Au chargement</option>
-                      <option value="hover">Au survol</option>
-                      <option value="click">Au clic</option>
-                      <option value="scroll">Au défilement</option>
-                      <option value="manual">Manuel</option>
+                      <option value="load">On load</option>
+                      <option value="hover">On hover</option>
+                      <option value="click">On click</option>
+                      <option value="scroll">On scroll</option>
+                      <option value="manual">Manual</option>
                     </select>
                   </div>
                   
@@ -713,7 +713,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                       onChange={(e) => setAnimationSettings(prev => ({ ...prev, hidden: e.target.checked }))}
                       className="mr-2 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500"
                     />
-                    <label className="text-sm font-medium text-gray-300">Masquer initialement</label>
+                    <label className="text-sm font-medium text-gray-300">Initially hidden</label>
                   </div>
                 </div>
               </div>
@@ -728,7 +728,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             className="w-full flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 hover:scale-105 transition-all duration-200 font-medium"
           >
             <Download className="w-4 h-4" />
-            <span>Télécharger le formulaire</span>
+            <span>Download form</span>
           </button>
         </div>
       </div>
@@ -749,11 +749,11 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
               fontFamily: layoutSettings.fontFamily,
               boxShadow: `${layoutSettings.shadow}, 0 0 40px rgba(59, 130, 246, 0.1)`
             }}>
-              {/* Effet de brillance moderne */}
+              {/* Modern shimmer effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 animate-shimmer"></div>
               
               <h2 className="text-2xl font-bold mb-6 text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Aperçu de votre formulaire
+                Form preview
               </h2>
               
               {fields.length === 0 ? (
@@ -763,8 +763,8 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                   </div>
-                  <p className="text-lg mb-2">Votre formulaire apparaîtra ici</p>
-                  <p>Ajoutez des champs dans la barre latérale pour commencer</p>
+                  <p className="text-lg mb-2">Your form will appear here</p>
+                  <p>Add fields in the sidebar to get started</p>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -820,7 +820,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                               fontFamily: layoutSettings.fontFamily
                             }}
                           >
-                            <option value="">Choisissez une option</option>
+                            <option value="">Choose an option</option>
                             {field.options?.map((option, index) => (
                               <option key={index} value={option.value}>{option.label}</option>
                             ))}
@@ -907,12 +907,12 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Code Modal avec animations */}
+      {/* Code Modal with animations */}
       {showCodeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 animate-fade-in">
           <div className="bg-gray-800 rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col animate-scale-in">
             <div className="flex items-center justify-between p-6 border-b border-gray-700">
-              <h2 className="text-xl font-semibold text-white">Votre formulaire est prêt !</h2>
+              <h2 className="text-xl font-semibold text-white">Your form is ready!</h2>
               <button
                 onClick={() => setShowCodeModal(false)}
                 className="text-gray-400 hover:text-gray-200 transition-colors"
@@ -924,7 +924,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
             <div className="flex-1 p-6 overflow-hidden">
               <div className="mb-4">
                 <p className="text-gray-300">
-                  Copiez le code ci-dessous ou téléchargez le fichier HTML pour utiliser votre formulaire.
+                  Copy the code below or download the HTML file to use your form.
                 </p>
               </div>
               <div className="bg-gray-900 rounded-lg p-4 h-96 overflow-auto border border-gray-700">
@@ -940,21 +940,21 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors"
               >
                 <Copy className="w-4 h-4" />
-                <span>Copier le code</span>
+                <span>Copy code</span>
               </button>
               <button
                 onClick={downloadFile}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Download className="w-4 h-4" />
-                <span>Télécharger le fichier</span>
+                <span>Download file</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Animations CSS personnalisées */}
+      {/* Custom CSS animations */}
       <style jsx>{`
         @keyframes slide-in-left {
           from { transform: translateX(-100%); opacity: 0; }

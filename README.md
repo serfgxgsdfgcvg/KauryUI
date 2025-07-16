@@ -1,122 +1,134 @@
-# KauryUI - Modern Web Components Library
+<div align="center">
+	<br>
+	<br>
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="assets/kauryui-light.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="assets/kauryui-dark.svg">
+      <img src="assets/kauryui-light.svg" alt="KauryUI logo" width="1000">
+    </picture>
+	<br>
+	<br>
+</div>
 
-A beautiful, accessible, and performant web components library for building modern forms and UI interfaces.
+<div align="center">
+  A modern & fluid UI framework focused on animated forms, dark elegance, and seamless UX.
+</div>
 
-## 🚀 Features
+<br />
 
-- **Modern Web Components**: Built with native Web Components API
-- **Framework Agnostic**: Works with React, Vue, Angular, or vanilla HTML
-- **Accessible**: WCAG 2.1 compliant with full keyboard navigation
-- **Themeable**: Comprehensive theming system with CSS custom properties
-- **TypeScript**: Full TypeScript support with type definitions
-- **Lightweight**: Minimal bundle size with tree-shaking support
-- **CDN Ready**: Available on jsDelivr and unpkg
+<div align="center">
+  <a href="https://github.com/kauryui/kauryui/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/kauryui/kauryui?style=social"></a>
+  <a href="https://github.com/kauryui/kauryui/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT-blueviolet"></a>
+</div>
 
-## 📦 Installation
+---
 
-### Via CDN
+## 📚 Documentation
+
+Visit [kauryui.org](https://kauryui.org) to explore the full documentation, live demos, and component playgrounds.
+
+---
+
+## 🔥 About
+
+**KauryUI** is a minimal, animated frontend framework that brings elegance, speed, and smart form handling to your projects. Designed to make forms **beautiful** and **usable**, KauryUI also ships with unique components, animated transitions, and dark-themed defaults.
+
+Whether you build SaaS, portfolios, admin panels, or creative apps, KauryUI helps you **move faster and look better**.
+
+---
+
+## ✨ Key Features
+
+- 🎯 **Form Builder** – build dynamic forms visually and export them
+- 🎨 **Animated Components** – buttons, modals, dropdowns, toasts, and more
+- 🌌 **Backgrounds** – noise, gradients, particles, and animated overlays
+- 🌀 **Motion Presets** – reusable animation variants for entrances/transitions
+- ✍️ **Text Animations** – glitch, wave, typewriter, blur, and scramble
+- ⚙️ **Lightweight & Fast** – zero dependencies if used in CDN mode
+- 🎁 **Works with**: HTML, React, Vue, Astro, or plain JS
+- 💾 **Use via CDN** or install via `npm i kauryui`
+
+---
+
+## 🚀 Quick Start
+
+### CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/kauryui@latest/dist/kauryui.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/kauryui@latest/kauryui.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/kauryui@latest/kauryui.min.js"></script>
 ```
 
-### Via npm
+### NPM
 
 ```bash
 npm install kauryui
 ```
 
-```javascript
-import 'kauryui';
-```
-
-## 🎯 Quick Start
+### Use
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/kauryui@latest/dist/kauryui.js"></script>
-</head>
-<body>
-    <kaury-form title="Contact Form">
-        <kaury-input 
-            name="name" 
-            label="Full Name" 
-            required
-        ></kaury-input>
-        
-        <kaury-input 
-            name="email" 
-            label="Email" 
-            type="email" 
-            required
-        ></kaury-input>
-        
-        <kaury-textarea 
-            name="message" 
-            label="Message"
-        ></kaury-textarea>
-        
-        <kaury-button type="submit" variant="primary">
-            Submit
-        </kaury-button>
-    </kaury-form>
-</body>
-</html>
+<button class="k-btn k-glow k-primary">Click Me</button>
 ```
 
-## 🎨 Components
+---
 
-### KauryInput
+## 🧱 Components
 
-```html
-<kaury-input 
-    name="username"
-    label="Username"
-    type="text"
-    placeholder="Enter username"
-    required
-></kaury-input>
-```
+- ✅ **Form Builder** – visual, responsive, exportable
+- 🌈 **Backgrounds Lab** – gradients, noise, animated SVGs
+- 🧩 **UI Components** – inputs, buttons, modals, etc.
+- 🎞️ **Motion FX** – entrance/exit animations, utilities
+- ✍️ **Text Animations** – glitch, typewriter, wave, scramble
+- 🧪 **Playground** – live test + copy-ready snippets
 
-### KauryButton
+> All components are fully responsive, accessible, and come with animation utilities built-in.
 
-```html
-<kaury-button variant="primary" size="md">
-    Click Me
-</kaury-button>
-```
+---
 
-### KauryForm
+## 🧪 Playground
 
-```html
-<kaury-form title="My Form" description="Form description">
-    <!-- Form fields -->
-</kaury-form>
-```
+Head over to [kauryui.org/playground](https://kauryui.org/playground) to test all components live, tweak props, and copy generated code instantly.
 
-## 🎭 Theming
+---
 
-KauryUI supports comprehensive theming through CSS custom properties:
+## 🛠 CLI
 
-```css
-:root {
-  --kaury-color-primary: #3B82F6;
-  --kaury-color-secondary: #64748B;
-  --kaury-spacing-md: 16px;
-  --kaury-border-radius-md: 8px;
-}
-```
+🚧 Coming soon: `kauryui-cli`  
+Generate new components, export forms, and preview instantly.
 
-## 📖 Documentation
-
-Visit our [documentation site](https://kauryui.dev) for detailed guides, API references, and examples.
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+Pull requests, suggestions, and bug reports are welcome!  
+Please see the [Contribution Guide](https://github.com/kauryui/kauryui/blob/main/CONTRIBUTING.md).
 
-## 📄 License
+---
 
-MIT License - see [LICENSE](LICENSE) file for details.
+## 🧠 Maintainer
+
+- [@JustSekkei](https://github.com/JustSekkei)
+
+---
+
+## 📊 Stats
+
+![Repobeats](https://repobeats.axiom.co/api/embed/your-repo-id.svg "Repobeats analytics image")
+
+---
+
+## ❤️ Sponsorship
+
+If you want to support the project and help cover hosting & development costs, you can make a donation here:
+
+👉 [Donate via Stripe](https://buy.stripe.com/5kAaIo03wgAb2S4aEW)
+
+Every contribution is deeply appreciated 💜
+
+---
+
+## 🪪 License
+
+Licensed under the [MIT License](LICENSE.md)  
+All rights reserved by the contributors of KauryUI.

@@ -736,148 +736,174 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
       {/* Preview */}
       <div className="flex-1 p-8 bg-gray-900">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-gray-800 rounded-lg shadow-2xl p-8" style={{
-            fontFamily: layoutSettings.fontFamily,
-            boxShadow: layoutSettings.shadow
-          }}>
-            <h2 className="text-2xl font-bold mb-6 text-white">
-              Aperçu de votre formulaire
-            </h2>
-            
-            {fields.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
-                <p className="text-lg mb-2">Votre formulaire apparaîtra ici</p>
-                <p>Ajoutez des champs dans la barre latérale pour commencer</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {fields.map(field => (
-                  <div key={field.id} className="space-y-2">
-                    {field.type === 'input' && (
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-200">
-                          {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
-                        </label>
-                        <input
-                          type="text"
-                          placeholder={field.placeholder}
-                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                          style={{
-                            borderRadius: layoutSettings.borderRadius,
-                            fontFamily: layoutSettings.fontFamily
-                          }}
-                        />
-                      </div>
-                    )}
-                    
-                    {field.type === 'textarea' && (
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-200">
-                          {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
-                        </label>
-                        <textarea
-                          placeholder={field.placeholder}
-                          rows={4}
-                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg resize-vertical text-white"
-                          style={{
-                            borderRadius: layoutSettings.borderRadius,
-                            fontFamily: layoutSettings.fontFamily
-                          }}
-                        />
-                      </div>
-                    )}
-                    
-                    {field.type === 'select' && (
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-200">
-                          {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
-                        </label>
-                        <select
-                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                          style={{
-                            borderRadius: layoutSettings.borderRadius,
-                            fontFamily: layoutSettings.fontFamily
-                          }}
-                        >
-                          <option value="">Choisissez une option</option>
-                          {field.options?.map((option, index) => (
-                            <option key={index} value={option.value}>{option.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-                    
-                    {field.type === 'checkbox' && (
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-200">
-                          {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
-                        </label>
-                        <div className="space-y-2">
-                          {field.options?.map((option, index) => (
-                            <label key={index} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                value={option.value}
-                                className="mr-2 rounded bg-gray-700 border-gray-600"
-                                style={{ accentColor: themeColors.primary }}
-                              />
-                              <span className="text-gray-200" style={{ fontFamily: layoutSettings.fontFamily }}>
-                                {option.label}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {field.type === 'radio' && (
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-200">
-                          {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
-                        </label>
-                        <div className="space-y-2">
-                          {field.options?.map((option, index) => (
-                            <label key={index} className="flex items-center">
-                              <input
-                                type="radio"
-                                name={field.name}
-                                value={option.value}
-                                className="mr-2 bg-gray-700 border-gray-600"
-                                style={{ accentColor: themeColors.primary }}
-                              />
-                              <span className="text-gray-200" style={{ fontFamily: layoutSettings.fontFamily }}>
-                                {option.label}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {field.type === 'button' && (
-                      <button
-                        className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                          field.size === 'sm' ? 'px-4 py-1 text-sm' :
-                          field.size === 'lg' ? 'px-8 py-3 text-lg' : 'px-6 py-2'
-                        }`}
-                        style={{
-                          backgroundColor: field.variant === 'outline' ? 'transparent' : 
-                                         field.variant === 'ghost' ? 'transparent' :
-                                         field.variant === 'secondary' ? themeColors.secondary : themeColors.primary,
-                          color: field.variant === 'outline' || field.variant === 'ghost' ? themeColors.primary : 'white',
-                          border: field.variant === 'outline' ? `2px solid ${themeColors.primary}` : 'none',
-                          borderRadius: layoutSettings.borderRadius,
-                          fontFamily: layoutSettings.fontFamily
-                        }}
-                      >
-                        {field.label}
-                      </button>
-                    )}
+          <kaury-animation 
+            type={animationSettings.type}
+            duration={animationSettings.duration}
+            timing={animationSettings.timing}
+            delay={animationSettings.delay}
+            iteration={animationSettings.iteration}
+            trigger={animationSettings.trigger}
+            style={animationSettings.hidden ? { display: 'none' } : {}}
+          >
+            <div className="bg-gradient-to-br from-gray-800 via-gray-800 to-gray-700 rounded-2xl shadow-2xl p-8 border border-gray-600/30 backdrop-blur-sm relative overflow-hidden" style={{
+              fontFamily: layoutSettings.fontFamily,
+              boxShadow: `${layoutSettings.shadow}, 0 0 40px rgba(59, 130, 246, 0.1)`
+            }}>
+              {/* Effet de brillance moderne */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 animate-shimmer"></div>
+              
+              <h2 className="text-2xl font-bold mb-6 text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Aperçu de votre formulaire
+              </h2>
+              
+              {fields.length === 0 ? (
+                <div className="text-center py-12 text-gray-400 animate-pulse">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-gray-600 to-gray-500 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <p className="text-lg mb-2">Votre formulaire apparaîtra ici</p>
+                  <p>Ajoutez des champs dans la barre latérale pour commencer</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {fields.map((field, index) => (
+                    <div 
+                      key={field.id} 
+                      className="space-y-2 animate-fade-in-up hover:scale-[1.02] transition-all duration-300"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      {field.type === 'input' && (
+                        <div className="group">
+                          <label className="block text-sm font-medium mb-2 text-gray-200 group-hover:text-white transition-colors">
+                            {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
+                          </label>
+                          <input
+                            type="text"
+                            placeholder={field.placeholder}
+                            className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 hover:bg-gray-700/70 backdrop-blur-sm"
+                            style={{
+                              borderRadius: layoutSettings.borderRadius,
+                              fontFamily: layoutSettings.fontFamily
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      {field.type === 'textarea' && (
+                        <div className="group">
+                          <label className="block text-sm font-medium mb-2 text-gray-200 group-hover:text-white transition-colors">
+                            {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
+                          </label>
+                          <textarea
+                            placeholder={field.placeholder}
+                            rows={4}
+                            className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl resize-vertical text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 hover:bg-gray-700/70 backdrop-blur-sm"
+                            style={{
+                              borderRadius: layoutSettings.borderRadius,
+                              fontFamily: layoutSettings.fontFamily
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      {field.type === 'select' && (
+                        <div className="group">
+                          <label className="block text-sm font-medium mb-2 text-gray-200 group-hover:text-white transition-colors">
+                            {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
+                          </label>
+                          <select
+                            className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 hover:bg-gray-700/70 backdrop-blur-sm"
+                            style={{
+                              borderRadius: layoutSettings.borderRadius,
+                              fontFamily: layoutSettings.fontFamily
+                            }}
+                          >
+                            <option value="">Choisissez une option</option>
+                            {field.options?.map((option, index) => (
+                              <option key={index} value={option.value}>{option.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      
+                      {field.type === 'checkbox' && (
+                        <div className="group">
+                          <label className="block text-sm font-medium mb-3 text-gray-200 group-hover:text-white transition-colors">
+                            {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
+                          </label>
+                          <div className="space-y-3">
+                            {field.options?.map((option, index) => (
+                              <label key={index} className="flex items-center p-2 rounded-lg hover:bg-gray-700/30 transition-colors cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  value={option.value}
+                                  className="mr-3 w-4 h-4 rounded bg-gray-700 border-gray-600 focus:ring-2 focus:ring-blue-500/20"
+                                  style={{ accentColor: themeColors.primary }}
+                                />
+                                <span className="text-gray-200" style={{ fontFamily: layoutSettings.fontFamily }}>
+                                  {option.label}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {field.type === 'radio' && (
+                        <div className="group">
+                          <label className="block text-sm font-medium mb-3 text-gray-200 group-hover:text-white transition-colors">
+                            {field.label} {field.required && <span style={{ color: themeColors.error }}>*</span>}
+                          </label>
+                          <div className="space-y-3">
+                            {field.options?.map((option, index) => (
+                              <label key={index} className="flex items-center p-2 rounded-lg hover:bg-gray-700/30 transition-colors cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name={field.name}
+                                  value={option.value}
+                                  className="mr-3 w-4 h-4 bg-gray-700 border-gray-600 focus:ring-2 focus:ring-blue-500/20"
+                                  style={{ accentColor: themeColors.primary }}
+                                />
+                                <span className="text-gray-200" style={{ fontFamily: layoutSettings.fontFamily }}>
+                                  {option.label}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {field.type === 'button' && (
+                        <div className="pt-2">
+                          <button
+                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 ${
+                              field.size === 'sm' ? 'px-4 py-2 text-sm' :
+                              field.size === 'lg' ? 'px-8 py-4 text-lg' : 'px-6 py-3'
+                            }`}
+                            style={{
+                              backgroundColor: field.variant === 'outline' ? 'transparent' : 
+                                             field.variant === 'ghost' ? 'transparent' :
+                                             field.variant === 'secondary' ? themeColors.secondary : themeColors.primary,
+                              color: field.variant === 'outline' || field.variant === 'ghost' ? themeColors.primary : 'white',
+                              border: field.variant === 'outline' ? `2px solid ${themeColors.primary}` : 'none',
+                              borderRadius: layoutSettings.borderRadius,
+                              fontFamily: layoutSettings.fontFamily,
+                              boxShadow: field.variant !== 'outline' && field.variant !== 'ghost' ? 
+                                `0 4px 15px ${themeColors.primary}30` : 'none'
+                            }}
+                          >
+                            {field.label}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </kaury-animation>
         </div>
       </div>
 
@@ -950,6 +976,12 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ onNavigate }) => {
         .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
         .animate-fade-in-up { animation: fade-in-up 0.4s ease-out forwards; }
         .animate-scale-in { animation: scale-in 0.3s ease-out forwards; }
+        
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) skewX(-12deg); }
+          100% { transform: translateX(200%) skewX(-12deg); }
+        }
+        .animate-shimmer { animation: shimmer 3s ease-in-out infinite; }
       `}</style>
     </div>
   );

@@ -1,32 +1,5 @@
 import React from 'react';
-import { 
-  Sparkles, 
-  Zap, 
-  Code, 
-  Palette, 
-  Layers, 
-  ArrowRight, 
-  Github, 
-  Star,
-  Play,
-  Download,
-  Users,
-  Globe,
-  Shield,
-  Rocket,
-  Layout,
-  Image,
-  Type,
-  Library,
-  Embed,
-  Settings,
-  BarChart3,
-  Wand2,
-  Paintbrush,
-  Grid3X3,
-  MousePointer,
-  Cpu
-} from 'lucide-react';
+import { Sparkles, Zap, Code, Palette, Layers, ArrowRight, Github, Star, Play, Download, Users, Globe, Shield, Rocket, Layout, Image, Type, Library, Dumbbell as Embed, Settings, BarChart3, Wand2, Paintbrush, Grid3X3, MousePointer, Cpu } from 'lucide-react';
 
 interface LandingPageProps {
   onNavigate: (component: string) => void;

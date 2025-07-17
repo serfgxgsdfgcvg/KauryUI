@@ -142,7 +142,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 icon: <Sparkles className="w-6 h-6" />,
                 title: "Favicon Generator",
                 description: "Create favicons from text or images",
-                available: false,
+                available: true,
                 gradient: "from-violet-500 to-purple-500"
               },
               {
@@ -161,7 +161,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                     : 'opacity-75'
                 }`}
                 style={{ animationDelay: `${index * 100}ms` }}
-                onClick={() => tool.available && onNavigate('form-builder')}
+                onClick={() => {
+                  if (tool.available) {
+                    if (tool.title === 'Form Builder') {
+                      onNavigate('form-builder');
+                    } else if (tool.title === 'Favicon Generator') {
+                      onNavigate('favicon-generator');
+                    }
+                  }
+                }}
               >
                 {/* Gradient overlay on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${tool.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>

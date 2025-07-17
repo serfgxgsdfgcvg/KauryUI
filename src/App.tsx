@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { FormBuilder } from './components/FormBuilder';
+import { FaviconGenerator } from './components/FaviconGenerator';
 
-type View = 'landing' | 'form-builder';
+type View = 'landing' | 'form-builder' | 'favicon-generator';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('landing');
@@ -18,6 +19,9 @@ function App() {
       )}
       {currentView === 'form-builder' && (
         <FormBuilder onNavigate={handleNavigation} />
+      )}
+      {currentView === 'favicon-generator' && (
+        <FaviconGenerator onNavigate={handleNavigation} />
       )}
     </div>
   );

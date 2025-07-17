@@ -21,7 +21,8 @@ import {
   Globe,
   Smartphone,
   Monitor,
-  Tablet
+  Tablet,
+  Sparkles
 } from 'lucide-react';
 
 interface EmbedGeneratorProps {
@@ -68,7 +69,10 @@ interface EmbedConfig {
   borderRadius: number;
   padding: number;
   shadow: boolean;
-  animation: boolean;
+  // Enhanced animation and effects
+  glassmorphismEnabled: boolean;
+  entryAnimation: 'none' | 'fade-in' | 'slide-up' | 'bounce-in' | 'zoom-in';
+  hoverEffect: 'none' | 'scale' | 'lift' | 'glow' | 'rotate';
 }
 
 export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) => {
@@ -106,7 +110,9 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
     borderRadius: 8,
     padding: 16,
     shadow: true,
-    animation: true
+    glassmorphismEnabled: false,
+    entryAnimation: 'fade-in',
+    hoverEffect: 'lift'
   });
 
   const embedTypes = [
@@ -119,26 +125,40 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
   ];
 
   const generateEmbedHTML = () => {
+    // Glassmorphism styles
+    let glassmorphismCss = '';
+    if (config.glassmorphismEnabled) {
+      glassmorphismCss = `
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      `;
+    }
+
     const baseStyles = `
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: ${config.backgroundColor};
+      background: ${config.glassmorphismEnabled ? 'rgba(255, 255, 255, 0.1)' : config.backgroundColor};
       color: ${config.textColor};
       border-radius: ${config.borderRadius}px;
       padding: ${config.padding}px;
       ${config.shadow ? 'box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);' : ''}
-      ${config.animation ? 'transition: all 0.3s ease;' : ''}
+      transition: all 0.3s ease;
       text-decoration: none;
       display: inline-block;
       border: none;
       cursor: pointer;
+      ${glassmorphismCss}
     `;
 
-    const hoverStyles = config.animation ? `
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-      }
-    ` : '';
+    // Build CSS classes for animations and effects
+    let embedClasses = 'embed-widget';
+    if (config.entryAnimation !== 'none') {
+      embedClasses += ` embed-${config.entryAnimation}`;
+    }
+    if (config.hoverEffect !== 'none') {
+      embedClasses += ` embed-hover-${config.hoverEffect}`;
+    }
 
     switch (config.type) {
       case 'button':
@@ -155,11 +175,11 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
           ghost: `background: transparent; color: ${config.accentColor};`
         };
 
-        return `<a href="${config.buttonUrl}" style="${baseStyles} ${buttonSizes[config.buttonSize]} ${buttonStyles[config.buttonStyle]}" target="_blank" rel="noopener">${config.buttonText}</a>`;
+        return `<a href="${config.buttonUrl}" class="${embedClasses}" style="${baseStyles} ${buttonSizes[config.buttonSize]} ${buttonStyles[config.buttonStyle]}" target="_blank" rel="noopener">${config.buttonText}</a>`;
 
       case 'card':
         return `
-<div style="${baseStyles} max-width: 300px;">
+<div class="${embedClasses}" style="${baseStyles} max-width: 300px;">
   <img src="${config.cardImage}" alt="${config.cardTitle}" style="width: 100%; height: 200px; object-fit: cover; border-radius: ${config.borderRadius}px; margin-bottom: 16px;">
   <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600;">${config.cardTitle}</h3>
   <p style="margin: 0 0 16px 0; color: #6b7280; line-height: 1.5;">${config.cardDescription}</p>
@@ -168,7 +188,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
 
       case 'testimonial':
         return `
-<div style="${baseStyles} max-width: 400px;">
+<div class="${embedClasses}" style="${baseStyles} max-width: 400px;">
   <div style="display: flex; align-items: center; margin-bottom: 16px;">
     <img src="${config.testimonialAvatar}" alt="${config.testimonialAuthor}" style="width: 48px; height: 48px; border-radius: 50%; margin-right: 12px;">
     <div>
@@ -191,7 +211,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
         };
 
         return `
-<div style="${baseStyles} text-align: center; min-width: 200px;">
+<div class="${embedClasses}" style="${baseStyles} text-align: center; min-width: 200px;">
   <div style="font-size: 32px; margin-bottom: 8px;">${getStatsIcon()}</div>
   <div style="font-size: 32px; font-weight: 700; color: ${config.accentColor}; margin-bottom: 4px;">${config.statsValue}</div>
   <div style="color: #6b7280; font-size: 14px;">${config.statsLabel}</div>
@@ -209,7 +229,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
         };
 
         return `
-<div style="${baseStyles} display: flex; align-items: center; max-width: 250px;">
+<div class="${embedClasses}" style="${baseStyles} display: flex; align-items: center; max-width: 250px;">
   <div style="font-size: 24px; margin-right: 12px;">${getPlatformIcon()}</div>
   <div>
     <div style="font-weight: 600; margin-bottom: 2px;">${config.socialHandle}</div>
@@ -219,7 +239,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
 
       case 'newsletter':
         return `
-<div style="${baseStyles} max-width: 400px;">
+<div class="${embedClasses}" style="${baseStyles} max-width: 400px;">
   <h3 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">${config.newsletterTitle}</h3>
   <p style="margin: 0 0 16px 0; color: #6b7280; line-height: 1.5;">${config.newsletterDescription}</p>
   <div style="display: flex; gap: 8px;">
@@ -245,11 +265,96 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
         body {
             margin: 0;
             padding: 20px;
-            background: #f3f4f6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Entry Animation Classes */
+        .embed-fade-in { 
+            animation: fadeIn 0.6s ease-out forwards; 
+            opacity: 0; 
+        }
+
+        .embed-slide-up { 
+            animation: slideUp 0.6s ease-out forwards; 
+            opacity: 0; 
+        }
+
+        .embed-bounce-in { 
+            animation: bounceIn 0.8s ease-out forwards; 
+            opacity: 0; 
+        }
+
+        .embed-zoom-in { 
+            animation: zoomIn 0.5s ease-out forwards; 
+            opacity: 0; 
+        }
+
+        /* Hover Effect Classes */
+        .embed-hover-scale:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
+        }
+
+        .embed-hover-lift:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); 
+        }
+
+        .embed-hover-glow:hover { 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 8px 15px rgba(0, 0, 0, 0.2); 
+        }
+
+        .embed-hover-rotate:hover { 
+            transform: rotate(2deg) scale(1.02); 
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); 
+        }
+
+        /* Base Widget Styles */
+        .embed-widget {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .embed-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .embed-widget:hover::before {
+            left: 100%;
         }
     </style>
 </head>
@@ -688,12 +793,54 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={config.animation}
-                      onChange={(e) => updateConfig({ animation: e.target.checked })}
+                      checked={config.glassmorphismEnabled}
+                      onChange={(e) => updateConfig({ glassmorphismEnabled: e.target.checked })}
                       className="mr-2 rounded bg-gray-700 border-gray-600 text-teal-500 focus:ring-teal-500"
                     />
-                    <span className="text-sm text-gray-300">Animation</span>
+                    <span className="text-sm text-gray-300 flex items-center">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      Glassmorphism
+                    </span>
                   </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Animation & Effects */}
+            <div className="border-t border-gray-700 pt-6">
+              <h3 className="text-sm font-medium text-white mb-3 flex items-center">
+                <Zap className="w-4 h-4 mr-2" />
+                Animation & Effects
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Entry Animation</label>
+                  <select
+                    value={config.entryAnimation}
+                    onChange={(e) => updateConfig({ entryAnimation: e.target.value as 'none' | 'fade-in' | 'slide-up' | 'bounce-in' | 'zoom-in' })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-teal-500"
+                  >
+                    <option value="none">None</option>
+                    <option value="fade-in">Fade In</option>
+                    <option value="slide-up">Slide Up</option>
+                    <option value="bounce-in">Bounce In</option>
+                    <option value="zoom-in">Zoom In</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Hover Effect</label>
+                  <select
+                    value={config.hoverEffect}
+                    onChange={(e) => updateConfig({ hoverEffect: e.target.value as 'none' | 'scale' | 'lift' | 'glow' | 'rotate' })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-teal-500"
+                  >
+                    <option value="none">None</option>
+                    <option value="scale">Scale</option>
+                    <option value="lift">Lift</option>
+                    <option value="glow">Glow</option>
+                    <option value="rotate">Rotate</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -751,7 +898,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
               <h2 className="text-2xl font-bold text-white mb-8">Design Preview</h2>
               
               <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
-                <div className="flex items-center justify-center min-h-[300px] bg-gray-700/30 rounded-lg">
+                <div className="flex items-center justify-center min-h-[300px] bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-lg">
                   <div dangerouslySetInnerHTML={{ __html: generateEmbedHTML() }} />
                 </div>
               </div>
@@ -765,7 +912,9 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
                     <ul className="space-y-1">
                       <li>• Responsive design</li>
                       <li>• Customizable colors</li>
-                      <li>• Hover animations</li>
+                      <li>• Entry animations</li>
+                      <li>• Hover effects</li>
+                      <li>• Glassmorphism support</li>
                       <li>• Cross-browser compatible</li>
                     </ul>
                   </div>
@@ -776,6 +925,7 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
                       <li>• Paste into your HTML</li>
                       <li>• No external dependencies</li>
                       <li>• Works on any website</li>
+                      <li>• Mobile-friendly</li>
                     </ul>
                   </div>
                 </div>
@@ -874,13 +1024,13 @@ export const EmbedGenerator: React.FC<EmbedGeneratorProps> = ({ onNavigate }) =>
                 </div>
                 <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                   <Zap className="w-8 h-8 text-teal-400 mb-3" />
-                  <h3 className="font-semibold text-white mb-2">Fast Loading</h3>
-                  <p className="text-sm text-gray-400">Lightweight with no external dependencies</p>
+                  <h3 className="font-semibold text-white mb-2">Animated</h3>
+                  <p className="text-sm text-gray-400">Beautiful entry animations and hover effects</p>
                 </div>
                 <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                   <Settings className="w-8 h-8 text-teal-400 mb-3" />
                   <h3 className="font-semibold text-white mb-2">Customizable</h3>
-                  <p className="text-sm text-gray-400">Easy to modify colors and styling</p>
+                  <p className="text-sm text-gray-400">Easy to modify colors, effects, and styling</p>
                 </div>
               </div>
             </div>

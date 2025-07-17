@@ -3,8 +3,9 @@ import { LandingPage } from './components/LandingPage';
 import { FormBuilder } from './components/FormBuilder';
 import { FaviconGenerator } from './components/FaviconGenerator';
 import { EmbedGenerator } from './components/EmbedGenerator';
+import { IconLibrary } from './components/IconLibrary';
 
-type View = 'landing' | 'form-builder' | 'favicon-generator' | 'embed-generator';
+type View = 'landing' | 'form-builder' | 'favicon-generator' | 'embed-generator' | 'icon-library';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('landing');
@@ -26,6 +27,9 @@ function App() {
       )}
       {currentView === 'embed-generator' && (
         <EmbedGenerator onNavigate={handleNavigation} />
+      )}
+      {currentView === 'icon-library' && (
+        <IconLibrary onNavigate={handleNavigation} />
       )}
     </div>
   );

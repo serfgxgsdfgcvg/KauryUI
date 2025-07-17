@@ -135,7 +135,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 icon: <Embed className="w-6 h-6" />,
                 title: "Embed Generator",
                 description: "Generate embeddable widgets and components",
-                available: false,
+                available: true,
                 gradient: "from-teal-500 to-cyan-500"
               },
               {
@@ -167,6 +167,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                       onNavigate('form-builder');
                     } else if (tool.title === 'Favicon Generator') {
                       onNavigate('favicon-generator');
+                    } else if (tool.title === 'Embed Generator') {
+                      onNavigate('embed-generator');
                     }
                   }
                 }}

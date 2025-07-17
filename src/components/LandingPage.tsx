@@ -128,7 +128,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 icon: <Library className="w-6 h-6" />,
                 title: "Icon Library",
                 description: "Curated collection of modern icons",
-                available: false,
+                available: true,
                 gradient: "from-indigo-500 to-purple-500"
               },
               {
@@ -169,6 +169,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                       onNavigate('favicon-generator');
                     } else if (tool.title === 'Embed Generator') {
                       onNavigate('embed-generator');
+                    } else if (tool.title === 'Icon Library') {
+                      onNavigate('icon-library');
                     }
                   }
                 }}

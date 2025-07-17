@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   ArrowLeft, 
   Image, 
@@ -9,7 +9,8 @@ import {
   Settings,
   Sparkles,
   Copy,
-  Check
+  Check,
+  X
 } from 'lucide-react';
 
 interface FaviconGeneratorProps {
@@ -25,6 +26,12 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
   const [fontFamily, setFontFamily] = useState('Inter, sans-serif');
   const [borderRadius, setBorderRadius] = useState(8);
   const [copied, setCopied] = useState(false);
+  
+  // Image-related states
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [cropMode, setCropMode] = useState<'center' | 'fit' | 'fill'>('center');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCopy = () => {
     // Simulate copying functionality
@@ -32,9 +39,94 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file (PNG, JPG, SVG)');
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      setImageFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const generateFavicon = () => {
     // This would generate the actual favicon
     console.log('Generating favicon...');
+  };
+
+  const renderPreview = (size: number) => {
+    if (activeTab === 'image' && selectedImage) {
+      return (
+        <div
+          className="flex items-center justify-center overflow-hidden"
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            backgroundColor: backgroundColor,
+            borderRadius: `${Math.min(borderRadius, size * 0.25)}px`,
+          }}
+        >
+          <img
+            src={selectedImage}
+            alt="Favicon preview"
+            className={`${
+              cropMode === 'center' ? 'object-cover' :
+              cropMode === 'fit' ? 'object-contain' : 'object-cover'
+            }`}
+            style={{
+              width: cropMode === 'fit' ? '80%' : '100%',
+              height: cropMode === 'fit' ? '80%' : '100%',
+            }}
+          />
+        </div>
+      );
+    }
+
+    // Text preview (existing code)
+    return (
+      <div
+        className="flex items-center justify-center font-bold"
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          backgroundColor: backgroundColor,
+          color: textColor,
+          fontSize: `${Math.max(size * 0.5, 8)}px`,
+          fontFamily: fontFamily,
+          borderRadius: `${Math.min(borderRadius, size * 0.25)}px`,
+        }}
+      >
+        {textInput}
+      </div>
+    );
   };
 
   return (
@@ -144,74 +236,119 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Background Color</label>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="color"
-                    value={backgroundColor}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="w-12 h-8 border border-gray-600 rounded cursor-pointer bg-gray-700"
-                  />
-                  <input
-                    type="text"
-                    value={backgroundColor}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
-                    className="flex-1 px-3 py-1 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:ring-1 focus:ring-orange-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius: {borderRadius}px</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="32"
-                  value={borderRadius}
-                  onChange={(e) => setBorderRadius(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                />
-              </div>
             </div>
           )}
 
           {activeTab === 'image' && (
             <div className="space-y-6">
-              <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-400 mb-2">Drop your image here or click to browse</p>
-                <p className="text-xs text-gray-500">Supports PNG, JPG, SVG (max 5MB)</p>
-                <button className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-                  Choose File
-                </button>
-              </div>
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+
+              {!selectedImage ? (
+                <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
+                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-400 mb-2">Drop your image here or click to browse</p>
+                  <p className="text-xs text-gray-500">Supports PNG, JPG, SVG (max 5MB)</p>
+                  <button 
+                    onClick={handleFileSelect}
+                    className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    Choose File
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Image preview */}
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-gray-300">Selected Image</h3>
+                      <button
+                        onClick={removeImage}
+                        className="text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-center bg-gray-600 rounded-lg p-4">
+                      <img
+                        src={selectedImage}
+                        alt="Selected"
+                        className="max-w-full max-h-32 object-contain rounded"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">
+                      {imageFile?.name} ({Math.round((imageFile?.size || 0) / 1024)}KB)
+                    </p>
+                  </div>
+
+                  {/* Change image button */}
+                  <button
+                    onClick={handleFileSelect}
+                    className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                  >
+                    Change Image
+                  </button>
+                </div>
+              )}
 
               <div className="bg-gray-700/50 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-gray-300 mb-2">Image Settings</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm text-gray-400 mb-1">Crop Mode</label>
-                    <select className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-orange-500">
-                      <option>Center Crop</option>
-                      <option>Fit</option>
-                      <option>Fill</option>
+                    <select 
+                      value={cropMode}
+                      onChange={(e) => setCropMode(e.target.value as 'center' | 'fit' | 'fill')}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-orange-500"
+                    >
+                      <option value="center">Center Crop</option>
+                      <option value="fit">Fit</option>
+                      <option value="fill">Fill</option>
                     </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-1">Background</label>
-                    <input
-                      type="color"
-                      value={backgroundColor}
-                      onChange={(e) => setBackgroundColor(e.target.value)}
-                      className="w-full h-8 border border-gray-600 rounded cursor-pointer bg-gray-700"
-                    />
                   </div>
                 </div>
               </div>
             </div>
           )}
+
+          {/* Common settings for both tabs */}
+          <div className="space-y-6 mt-6 pt-6 border-t border-gray-700">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Background Color</label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="color"
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  className="w-12 h-8 border border-gray-600 rounded cursor-pointer bg-gray-700"
+                />
+                <input
+                  type="text"
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                  className="flex-1 px-3 py-1 bg-gray-700 border border-gray-600 rounded text-sm text-white focus:ring-1 focus:ring-orange-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Border Radius: {borderRadius}px</label>
+              <input
+                type="range"
+                min="0"
+                max="32"
+                value={borderRadius}
+                onChange={(e) => setBorderRadius(Number(e.target.value))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Actions */}
@@ -244,20 +381,7 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
             <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
               <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
               <div className="flex items-center justify-center bg-gray-700 rounded-lg p-8">
-                <div
-                  className="flex items-center justify-center font-bold"
-                  style={{
-                    width: '64px',
-                    height: '64px',
-                    backgroundColor: backgroundColor,
-                    color: textColor,
-                    fontSize: `${fontSize}px`,
-                    fontFamily: fontFamily,
-                    borderRadius: `${borderRadius}px`,
-                  }}
-                >
-                  {textInput}
-                </div>
+                {renderPreview(64)}
               </div>
             </div>
 
@@ -267,19 +391,8 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
               <div className="grid grid-cols-4 gap-4">
                 {[16, 32, 48, 64].map((size) => (
                   <div key={size} className="text-center">
-                    <div
-                      className="flex items-center justify-center font-bold mx-auto mb-2"
-                      style={{
-                        width: `${size}px`,
-                        height: `${size}px`,
-                        backgroundColor: backgroundColor,
-                        color: textColor,
-                        fontSize: `${Math.max(size * 0.5, 8)}px`,
-                        fontFamily: fontFamily,
-                        borderRadius: `${Math.min(borderRadius, size * 0.25)}px`,
-                      }}
-                    >
-                      {textInput}
+                    <div className="mx-auto mb-2">
+                      {renderPreview(size)}
                     </div>
                     <span className="text-xs text-gray-400">{size}×{size}</span>
                   </div>
@@ -292,21 +405,8 @@ export const FaviconGenerator: React.FC<FaviconGeneratorProps> = ({ onNavigate }
               <h3 className="text-lg font-semibold text-white mb-4">Browser Tab Preview</h3>
               <div className="bg-gray-700 rounded-lg p-4">
                 <div className="flex items-center space-x-2 bg-gray-600 rounded-t-lg px-3 py-2">
-                  <div
-                    className="flex items-center justify-center font-bold"
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      backgroundColor: backgroundColor,
-                      color: textColor,
-                      fontSize: '8px',
-                      fontFamily: fontFamily,
-                      borderRadius: `${Math.min(borderRadius, 4)}px`,
-                    }}
-                  >
-                    {textInput}
-                  </div>
-                  <span className="text-sm text-gray-300">My Website</span>
+                  {renderPreview(16)}
+                  <span className="text-sm text-gray-300 ml-2">My Website</span>
                   <div className="w-4 h-4 bg-gray-500 rounded-full flex items-center justify-center ml-auto">
                     <span className="text-xs text-gray-300">×</span>
                   </div>

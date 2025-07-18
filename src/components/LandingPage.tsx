@@ -149,7 +149,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 icon: <BarChart3 className="w-6 h-6" />,
                 title: "Dashboard Components",
                 description: "Charts, metrics, and dashboard widgets",
-                available: false,
+                available: true,
                 gradient: "from-blue-500 to-indigo-500"
               }
             ].map((tool, index) => (
@@ -171,6 +171,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                       onNavigate('embed-generator');
                     } else if (tool.title === 'Icon Library') {
                       onNavigate('icon-library');
+                    } else if (tool.title === 'Dashboard Components') {
+                      onNavigate('dashboard-components');
                     }
                   }
                 }}

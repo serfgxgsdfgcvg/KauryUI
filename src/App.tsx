@@ -4,8 +4,9 @@ import { FormBuilder } from './components/FormBuilder';
 import { FaviconGenerator } from './components/FaviconGenerator';
 import { EmbedGenerator } from './components/EmbedGenerator';
 import { IconLibrary } from './components/IconLibrary';
+import { DashboardComponents } from './components/DashboardComponents';
 
-type View = 'landing' | 'form-builder' | 'favicon-generator' | 'embed-generator' | 'icon-library';
+type View = 'landing' | 'form-builder' | 'favicon-generator' | 'embed-generator' | 'icon-library' | 'dashboard-components';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('landing');
@@ -30,6 +31,9 @@ function App() {
       )}
       {currentView === 'icon-library' && (
         <IconLibrary onNavigate={handleNavigation} />
+      )}
+      {currentView === 'dashboard-components' && (
+        <DashboardComponents onNavigate={handleNavigation} />
       )}
     </div>
   );
